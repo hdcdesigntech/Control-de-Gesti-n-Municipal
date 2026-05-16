@@ -219,12 +219,12 @@
 
     <div class="hidden print-only fixed bottom-10 left-0 w-full grid grid-cols-3 text-center text-[10px] uppercase font-black px-12">
         <div class="border-t border-black pt-2 mx-6">Coordinador de Campo</div>
-        <div class="border-t border-black pt-2 mx-6">Dirección Executive</div>
+        <div class="border-t border-black pt-2 mx-6">Dirección Ejecutiva</div>
         <div class="border-t border-black pt-2 mx-6">Alcaldía de Guacara</div>
     </div>
 
     <script>
-        // ================= BASE DE DATOS LOCAL INICIALIZADA DE TRAYECTOS COMPLETA =================
+        // ================= BASE DE DATOS LOCAL DE TRAYECTOS =================
         let tramosPostes = [
             { id: 1, categoria: "Autopista", segmento: "Entrada hasta Dist. Yagua", tipoPoste: "Poste Alumbrado", total: 12, pintados: 7 },
             { id: 2, categoria: "Autopista", segmento: "Tramo Dist. Yagua - Variante", tipoPoste: "Poste Alumbrado", total: 25, pintados: 12 },
@@ -233,6 +233,7 @@
             { id: 5, categoria: "Espacios Estratégicos", segmento: "Alrededores Plaza de Yagua", tipoPoste: "Poste de Baja Tensión", total: 15, pintados: 0 }
         ];
 
+        // BASE DE DATOS LOCAL DE OBRAS CIVILES
         let proyectosObras = [
             {
                 id: 1,
@@ -278,7 +279,7 @@
             calcularYRenderizarPostes();
         }
 
-        // ================= MODIFICACIÓN QUIRÚRGICA: CÓMPUTO EN TIEMPO REAL COLOR POR COLOR =================
+        // CÓMPUTO VOLUMÉTRICO DE MATERIALES EN TIEMPO REAL
         function calcularYRenderizarPostes() {
             const tbody = document.getElementById('tabla-postes-body');
             tbody.innerHTML = "";
@@ -291,13 +292,11 @@
                 let pendientes = tramo.total - tramo.pintados;
                 let pct = tramo.total > 0 ? Math.round((tramo.pintados / tramo.total) * 100) : 0;
                 
-                // Ratios exactos: 1:4 para Base y 1:8 para Contraste
                 let basePintura = Math.ceil(tramo.pintados / 4);
                 let contrastePintura = Math.ceil(tramo.pintados / 8);
                 let brochas = Math.ceil((tramo.pintados / 15) * 2);
                 if (brochas < 1 && tramo.pintados > 0) brochas = 1;
 
-                // Separación cromática volumétrica por tipo de poste
                 let lblBase = tramo.tipoPoste === "Poste Alumbrado" ? "Naranja" : "Aluminio";
                 let lblContraste = tramo.tipoPoste === "Poste Alumbrado" ? "Azul" : "Negro";
 
@@ -346,14 +345,12 @@
                 `;
             });
 
-            // ACTUALIZACIÓN DE CONTENEDORES DE TARJETAS SUPERIORES (LOGICA INTERACTIVA)
             document.getElementById('global-alumbrado-postes').innerText = gAlumbrado;
             document.getElementById('global-baja-postes').innerText = gBaja;
             document.getElementById('global-pintados').innerText = gPintados;
             document.getElementById('global-pendientes').innerText = gPendientes;
             document.getElementById('global-porcentaje').innerText = gTotal > 0 ? `${Math.round((gPintados / gTotal) * 100)}%` : `0%`;
 
-            // Asignación volumétrica color por color
             document.getElementById('global-gal-naranja').innerText = galNaranja + " Gal";
             document.getElementById('global-gal-azul').innerText = galAzul + " Gal";
             document.getElementById('global-gal-aluminio').innerText = galAluminio + " Gal";
@@ -375,7 +372,7 @@
             calcularYRenderizarPostes();
         }
 
-        // ================= GESTIÓN Y BALANCE DE PROYECTOS Y MICROACTIVIDADES =================
+        // ================= GESTIÓN DE PROYECTOS Y MICROACTIVIDADES (OPCIÓN A) =================
         function renderizarObras() {
             const contenedor = document.getElementById('contenedor-obras');
             contenedor.innerHTML = "";
@@ -386,13 +383,14 @@
                 let pctObra = totalMicros > 0 ? Math.round((completadas / totalMicros) * 100) : 0;
                 let esLogroFinal = completadas === totalMicros && totalMicros > 0;
 
+                // Opción A: Sin tachado, iluminado en verde esmeralda translúcido si está completado
                 let htmlMicros = obra.micros.map((m, mIdx) => `
-                    <div class="flex items-center justify-between p-2.5 bg-black/20 rounded-xl border border-white/5 hover:border-white/10 transition-all">
+                    <div class="flex items-center justify-between p-2.5 ${m.cumplido ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-black/20 border-white/5 text-slate-200'} rounded-xl border transition-all hover:border-white/10">
                         <div class="flex items-center gap-3">
                             <input type="checkbox" ${m.cumplido ? 'checked' : ''} 
                                 onclick="alternarMicroActividad(${oIdx}, ${mIdx})" 
-                                class="w-4 h-4 rounded border-white/10 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer">
-                            <span class="text-xs ${m.cumplido ? 'line-through text-slate-500' : 'text-slate-200'} font-medium">${m.nombre}</span>
+                                class="w-4 h-4 rounded border-white/10 bg-slate-900 text-emerald-600 focus:ring-0 cursor-pointer">
+                            <span class="text-xs font-medium">${m.nombre}</span>
                         </div>
                         <button onclick="eliminarMicroActividad(${oIdx}, ${mIdx})" class="text-slate-600 hover:text-red-400 p-1 no-print">
                             <i class="fa-solid fa-xs fa-trash-can"></i>
@@ -402,14 +400,19 @@
 
                 contenedor.innerHTML += `
                     <div class="glass p-5 rounded-3xl border-l-4 ${esLogroFinal ? 'border-emerald-500' : 'border-blue-500'} space-y-4">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2">
                           <div>
                             <span class="text-[9px] bg-blue-500/10 text-blue-400 border border-blue-500/20 font-black uppercase px-2 py-0.5 rounded tracking-wide">${obra.tipo}</span>
                             <h4 class="text-base font-black text-white mt-1.5 leading-tight">${obra.titulo}</h4>
                           </div>
-                          <div class="text-right flex sm:flex-col items-center sm:items-end justify-between gap-1">
-                             <span class="text-[10px] text-slate-500 uppercase font-bold">Logro:</span>
-                             <span class="font-mono text-sm font-black ${esLogroFinal ? 'text-emerald-400' : 'text-blue-400'}">${pctObra}%</span>
+                          <div class="flex items-center gap-3 text-right">
+                             <div class="flex sm:flex-col items-center sm:items-end justify-between gap-1">
+                                <span class="text-[10px] text-slate-500 uppercase font-bold">Logro:</span>
+                                <span class="font-mono text-sm font-black ${esLogroFinal ? 'text-emerald-400' : 'text-blue-400'}">${pctObra}%</span>
+                             </div>
+                             <button onclick="eliminarProyecto(${oIdx})" class="text-slate-600 hover:text-red-400 p-2 transition-all no-print">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                             </button>
                           </div>
                         </div>
 
@@ -422,8 +425,6 @@
                         </div>
 
                         <div class="flex gap-2 pt-1 no-print">
-                            <input type="text" placeholder="Añadir paso operativo quirúrgico..." id="input-new-micro-${obra.id}"
-                                class="flex-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs outline-none focus:border-blue-500 text-white">
                             <input type="text" placeholder="Añadir paso operativo quirúrgico..." id="input-new-micro-${obra.id}"
                                 class="flex-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs outline-none focus:border-blue-500 text-white">
                             <button onclick="agregarMicroActividad(${oIdx}, ${obra.id})" class="bg-slate-800 hover:bg-slate-700 text-white px-4 rounded-xl text-xs font-bold">
@@ -442,6 +443,12 @@
 
             proyectosObras.unshift({ id: Date.now(), titulo: titulo, tipo: tipo, micros: [] });
             document.getElementById('obra-titulo').value = "";
+            renderizarObras();
+        }
+
+        // ACCIÓN QUIRÚRGICA: ELIMINAR PROYECTO COMPLETO
+        function eliminarProyecto(oIdx) {
+            proyectosObras.splice(oIdx, 1);
             renderizarObras();
         }
 
