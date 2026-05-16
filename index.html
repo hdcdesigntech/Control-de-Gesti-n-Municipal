@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirección Executive - Control Operativo Guacara</title>
+    <title>Dirección Ejecutiva - Control Operativo Guacara</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -57,12 +57,16 @@
 
     <main class="max-w-7xl mx-auto px-4 mt-6">
 
-        <div id="portal-postes" class="space-y-6">
+        <div id="portal-postes" class="space-y-4">
             
-            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div class="glass p-4 rounded-2xl border-l-4 border-blue-500">
-                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Total Postes Municipio</span>
-                    <span class="text-2xl font-black text-white font-mono" id="global-total-postes">0</span>
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Total Postes Alumbrado</span>
+                    <span class="text-2xl font-black text-white font-mono" id="global-alumbrado-postes">0</span>
+                </div>
+                <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Total Postes Baja Tensión</span>
+                    <span class="text-2xl font-black text-white font-mono" id="global-baja-postes">0</span>
                 </div>
                 <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500">
                     <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Logros Pintados</span>
@@ -72,13 +76,36 @@
                     <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Postes Pendientes</span>
                     <span class="text-2xl font-black text-amber-400 font-mono" id="global-pendientes">0</span>
                 </div>
-                <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500">
-                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Rendimiento General</span>
-                    <span class="text-2xl font-black text-indigo-400 font-mono" id="global-porcentaje">0%</span>
+                <div class="glass p-4 rounded-2xl border-l-4 border-purple-500">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Alcance General</span>
+                    <span class="text-2xl font-black text-purple-400 font-mono" id="global-porcentaje">0%</span>
                 </div>
             </section>
 
-            <section class="glass p-5 rounded-2xl no-print">
+            <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="glass p-3.5 rounded-2xl border-b-4 border-orange-500 bg-orange-500/5">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Pintura Naranja usado</span>
+                    <span class="text-xl font-black text-orange-400 font-mono" id="global-gal-naranja">0 Gal</span>
+                </div>
+                <div class="glass p-3.5 rounded-2xl border-b-4 border-blue-600 bg-blue-600/5">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Pintura Azul usado</span>
+                    <span class="text-xl font-black text-blue-400 font-mono" id="global-gal-azul">0 Gal</span>
+                </div>
+                <div class="glass p-3.5 rounded-2xl border-b-4 border-slate-400 bg-slate-400/5">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Pintura Aluminio usado</span>
+                    <span class="text-xl font-black text-slate-300 font-mono" id="global-gal-aluminio">0 Gal</span>
+                </div>
+                <div class="glass p-3.5 rounded-2xl border-b-4 border-zinc-700 bg-zinc-700/5">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Pintura Negra usado</span>
+                    <span class="text-xl font-black text-slate-400 font-mono" id="global-gal-negro">0 Gal</span>
+                </div>
+                <div class="glass p-3.5 rounded-2xl bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20">
+                    <span class="text-[9px] font-black uppercase text-blue-400 block tracking-wider">Total Galones Pintura</span>
+                    <span class="text-xl font-black text-white font-mono" id="global-gal-total">0 Gal</span>
+                </div>
+            </section>
+
+            <section class="glass p-5 rounded-2xl no-print mt-2">
                 <h3 class="text-xs font-black uppercase text-blue-400 tracking-wider mb-4">
                     <i class="fa-solid fa-route mr-1.5"></i> Configuración Táctica de Trayectos y Conteo
                 </h3>
@@ -192,7 +219,7 @@
 
     <div class="hidden print-only fixed bottom-10 left-0 w-full grid grid-cols-3 text-center text-[10px] uppercase font-black px-12">
         <div class="border-t border-black pt-2 mx-6">Coordinador de Campo</div>
-        <div class="border-t border-black pt-2 mx-6">Dirección Ejecutiva</div>
+        <div class="border-t border-black pt-2 mx-6">Dirección Executive</div>
         <div class="border-t border-black pt-2 mx-6">Alcaldía de Guacara</div>
     </div>
 
@@ -227,7 +254,6 @@
             document.getElementById('nav-actividades').className = portal === 'actividades' ? 'active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 uppercase' : 'px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 uppercase';
         }
 
-        // ACCIÓN QUIRÚRGICA: ACCIONADOR PARA INYECTAR UN NUEVO TRAYECTO DINÁMICO DESDE LA UI
         function agregarNuevoTrayecto(e) {
             e.preventDefault();
             const categoria = document.getElementById('trayecto-categoria').value;
@@ -238,16 +264,8 @@
 
             if (pintados > total) pintados = total;
 
-            tramosPostes.push({
-                id: Date.now(),
-                categoria,
-                segmento,
-                tipoPoste,
-                total,
-                pintados
-            });
+            tramosPostes.push({ id: Date.now(), categoria, segmento, tipoPoste, total, pintados });
 
-            // Resetear inputs tácticos
             document.getElementById('trayecto-segmento').value = "";
             document.getElementById('trayecto-total').value = "10";
             document.getElementById('trayecto-pintados').value = "0";
@@ -260,26 +278,38 @@
             calcularYRenderizarPostes();
         }
 
-        // ================= RENDERIZADO Y LOGÍTICA DE CÓMPUTO DE MATERIALES =================
+        // ================= MODIFICACIÓN QUIRÚRGICA: CÓMPUTO EN TIEMPO REAL COLOR POR COLOR =================
         function calcularYRenderizarPostes() {
             const tbody = document.getElementById('tabla-postes-body');
             tbody.innerHTML = "";
 
             let gTotal = 0, gPintados = 0, gPendientes = 0;
+            let gAlumbrado = 0, gBaja = 0;
+            let galNaranja = 0, galAzul = 0, galAluminio = 0, galNegro = 0;
 
             tramosPostes.forEach((tramo, index) => {
                 let pendientes = tramo.total - tramo.pintados;
                 let pct = tramo.total > 0 ? Math.round((tramo.pintados / tramo.total) * 100) : 0;
                 
-                // Algoritmos de consumo exactos solicitados
-                let basePintura = Math.ceil(tramo.pintados / 4); // 1 Galón rinde 4 postes (Aluminio o Naranja)
-                let contrastePintura = Math.ceil(tramo.pintados / 8); // 1 Galón rinde 8 postes (Negro o Azul)
-                let brochas = Math.ceil((tramo.pintados / 15) * 2); // 2 unidades por cada 15 postes
+                // Ratios exactos: 1:4 para Base y 1:8 para Contraste
+                let basePintura = Math.ceil(tramo.pintados / 4);
+                let contrastePintura = Math.ceil(tramo.pintados / 8);
+                let brochas = Math.ceil((tramo.pintados / 15) * 2);
                 if (brochas < 1 && tramo.pintados > 0) brochas = 1;
 
-                // Relación cromática según la infraestructura
+                // Separación cromática volumétrica por tipo de poste
                 let lblBase = tramo.tipoPoste === "Poste Alumbrado" ? "Naranja" : "Aluminio";
                 let lblContraste = tramo.tipoPoste === "Poste Alumbrado" ? "Azul" : "Negro";
+
+                if (tramo.tipoPoste === "Poste Alumbrado") {
+                    gAlumbrado += tramo.total;
+                    galNaranja += basePintura;
+                    galAzul += contrastePintura;
+                } else {
+                    gBaja += tramo.total;
+                    galAluminio += basePintura;
+                    galNegro += contrastePintura;
+                }
 
                 gTotal += tramo.total;
                 gPintados += tramo.pintados;
@@ -316,10 +346,19 @@
                 `;
             });
 
-            document.getElementById('global-total-postes').innerText = gTotal;
+            // ACTUALIZACIÓN DE CONTENEDORES DE TARJETAS SUPERIORES (LOGICA INTERACTIVA)
+            document.getElementById('global-alumbrado-postes').innerText = gAlumbrado;
+            document.getElementById('global-baja-postes').innerText = gBaja;
             document.getElementById('global-pintados').innerText = gPintados;
             document.getElementById('global-pendientes').innerText = gPendientes;
             document.getElementById('global-porcentaje').innerText = gTotal > 0 ? `${Math.round((gPintados / gTotal) * 100)}%` : `0%`;
+
+            // Asignación volumétrica color por color
+            document.getElementById('global-gal-naranja').innerText = galNaranja + " Gal";
+            document.getElementById('global-gal-azul').innerText = galAzul + " Gal";
+            document.getElementById('global-gal-aluminio').innerText = galAluminio + " Gal";
+            document.getElementById('global-gal-negro').innerText = galNegro + " Gal";
+            document.getElementById('global-gal-total').innerText = (galNaranja + galAzul + galAluminio + galNegro) + " Gal";
         }
 
         function actualizarTotalTramo(index, valor) {
@@ -383,6 +422,8 @@
                         </div>
 
                         <div class="flex gap-2 pt-1 no-print">
+                            <input type="text" placeholder="Añadir paso operativo quirúrgico..." id="input-new-micro-${obra.id}"
+                                class="flex-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs outline-none focus:border-blue-500 text-white">
                             <input type="text" placeholder="Añadir paso operativo quirúrgico..." id="input-new-micro-${obra.id}"
                                 class="flex-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs outline-none focus:border-blue-500 text-white">
                             <button onclick="agregarMicroActividad(${oIdx}, ${obra.id})" class="bg-slate-800 hover:bg-slate-700 text-white px-4 rounded-xl text-xs font-bold">
