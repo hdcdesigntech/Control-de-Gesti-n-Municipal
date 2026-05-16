@@ -121,4 +121,249 @@
                         </div>
                     </div>
                     <div class="lg:col-span-2 glass p-5 rounded-2xl flex flex-col items-center justify-center text-center">
-                        <h2 class="text-2xl font-black text-white uppercase tracking-tighter leading-none">Plan de Alumbr
+                        <h2 class="text-2xl font-black text-white uppercase tracking-tighter leading-none">Plan de Alumbrado 2026</h2>
+                        <p class="text-blue-400 text-[10px] font-black mt-2 uppercase tracking-[0.3em]">Agenda Semanal de Despliegue Operativo</p>
+                        <div class="mt-4 px-6 py-1 bg-blue-600 rounded-full text-[9px] font-black uppercase shadow-lg shadow-blue-600/20" id="fecha-al-semana">Semana: Pendiente de Carga</div>
+                    </div>
+                    <div class="glass p-5 rounded-2xl border-r-4 border-emerald-500 text-right">
+                        <h4 class="text-[9px] font-black uppercase text-emerald-400 mb-3 tracking-widest">Metas de la Semana</h4>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="font-bold text-xs" id="mt-al-100w">0</span> <span class="text-[10px] text-slate-400 uppercase">LED 100W</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="font-bold text-xs" id="mt-al-150w">0</span> <span class="text-[10px] text-slate-400 uppercase">LED 150W</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="font-bold text-xs" id="mt-al-calles">0</span> <span class="text-[10px] text-slate-400 uppercase">Calles</span></div>
+                            <div class="flex justify-between"><span class="font-bold text-xs" id="mt-al-sectores">0</span> <span class="text-[10px] text-slate-400 uppercase">Sectores</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl overflow-hidden border border-white/5">
+                    <table class="w-full text-center text-[10px] border-collapse">
+                        <thead><tr class="bg-blue-600 text-white uppercase font-black"><th class="p-4 border-r border-white/20">Día</th><th class="p-4 border-r border-white/20">Horario</th><th class="p-4 border-r border-white/20">Calle / Avenida</th><th class="p-4 border-r border-white/20">Sector</th><th class="p-4 border-r border-white/20">Cantidad</th><th class="p-4">Circuito Comunal</th></tr></thead>
+                        <tbody id="body-alumbrado" class="divide-y divide-white/5 font-bold"></tbody>
+                    </table>
+                </div>
+                <div class="hidden print-only grid grid-cols-3 text-center text-[10px] uppercase font-black mt-8 pt-6 border-t border-white/10">
+                    <div>Coordinación Operativa</div>
+                    <div>Dirección de Vialidad</div>
+                    <div>Alcaldía de Guacara</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-asfaltado" class="hidden space-y-6">
+            <div id="pdf-container-asfaltado" class="space-y-6 p-2 rounded-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                    <div class="glass p-5 rounded-2xl border-l-4 border-orange-500">
+                        <h4 class="text-[9px] font-black uppercase text-orange-400 mb-3 tracking-widest">Avances del Asfaltado</h4>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-[10px] text-slate-400 uppercase">Calles Atendidas</span> <span class="font-bold text-xs" id="st-as-calles">0</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-[10px] text-slate-400 uppercase">Sectores Atendidos</span> <span class="font-bold text-xs" id="st-as-sectores">0</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-[10px] text-slate-400 uppercase">Toneladas Aplicadas</span> <span class="font-bold text-xs text-orange-400" id="st-as-ton">0</span></div>
+                            <div class="flex justify-between"><span class="text-[10px] text-slate-400 uppercase">Última Actualización</span> <span class="font-bold text-[9px] text-slate-300" id="st-as-fecha">-</span></div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 glass p-5 rounded-2xl flex flex-col items-center justify-center text-center">
+                        <h2 class="text-2xl font-black text-white uppercase tracking-tighter leading-none">Plan de Asfaltado 2026</h2>
+                        <p class="text-orange-400 text-[10px] font-black mt-2 uppercase tracking-[0.3em]">Agenda Semanal de Vialidad</p>
+                        <div class="mt-4 px-6 py-1 bg-orange-600 rounded-full text-[9px] font-black uppercase shadow-lg shadow-orange-600/20" id="fecha-as-semana">Semana: Pendiente de Carga</div>
+                    </div>
+                    <div class="glass p-5 rounded-2xl border-r-4 border-emerald-500 text-right">
+                        <h4 class="text-[9px] font-black uppercase text-emerald-400 mb-3 tracking-widest">Metas de la Semana</h4>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="font-bold text-xs" id="mt-as-ton">0</span> <span class="text-[10px] text-slate-400 uppercase">Toneladas</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="font-bold text-xs" id="mt-as-calles">0</span> <span class="text-[10px] text-slate-400 uppercase">Calles</span></div>
+                            <div class="flex justify-between"><span class="font-bold text-xs" id="mt-as-sectores">0</span> <span class="text-[10px] text-slate-400 uppercase">Sectores</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl overflow-hidden border border-white/5">
+                    <table class="w-full text-center text-[10px] border-collapse">
+                        <thead><tr class="bg-orange-600 text-white uppercase font-black"><th class="p-4 border-r border-white/20">Día</th><th class="p-4 border-r border-white/20">Horario</th><th class="p-4 border-r border-white/20">Calle / Avenida</th><th class="p-4 border-r border-white/20">Sector</th><th class="p-4 border-r border-white/20">Toneladas</th><th class="p-4">Circuito Comunal</th></tr></thead>
+                        <tbody id="body-asfaltado" class="divide-y divide-white/5 font-bold"></tbody>
+                    </table>
+                </div>
+                <div class="hidden print-only grid grid-cols-3 text-center text-[10px] uppercase font-black mt-8 pt-6 border-t border-white/10">
+                    <div>Coordinación Operativa</div>
+                    <div>Dirección de Vialidad</div>
+                    <div>Alcaldía de Guacara</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function switchView(view) {
+            document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById('view-' + view).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab', 'text-slate-400'));
+            document.getElementById('btn-' + view).classList.add('active-tab');
+        }
+
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            ejecutarLecturaExcel(file);
+        });
+
+        function ejecutarLecturaExcel(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const lines = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                const scanText = JSON.stringify(lines).toUpperCase();
+
+                if (scanText.includes("PLAN DE ALUMBRADO") || scanText.includes("LUMINARIAS")) {
+                    processAlumbradoCSV(lines);
+                    switchView('alumbrado');
+                } else if (scanText.includes("PLAN DE ASFALTADO") || scanText.includes("CUADRO DE ASFALTO") || scanText.includes("TONELADAS APLICADAS")) {
+                    processAsfaltadoCSV(lines);
+                    switchView('asfaltado');
+                } else {
+                    alert("Formato de archivo Excel no reconocido como Plan Operativo de Guacara.");
+                }
+                document.getElementById('drop-zone').classList.add('hidden');
+            };
+            reader.readAsBinaryString(file);
+        }
+
+        function processAlumbradoCSV(lines) {
+            let agenda = [];
+            document.getElementById('fecha-al-semana').innerText = `Semana: ${lines[1]?.[7] || "Agenda Semanal"}`;
+
+            lines.forEach(row => {
+                const label = row[1]?.toString().trim().toUpperCase() || "";
+                const metaLabel = row[11]?.toString().trim().toUpperCase() || "";
+                
+                if(label.includes("CALLES ATENDIDAS")) document.getElementById('st-al-calles').innerText = row[2] || 0;
+                if(label.includes("SECTORES ATENDIDOS")) document.getElementById('st-al-sectores').innerText = row[2] || 0;
+                if(label.includes("LAMPARA LED 100W")) document.getElementById('st-al-100w').innerText = row[2] || 0;
+                if(label.includes("LAMPARA LED 150W")) document.getElementById('st-al-150w').innerText = row[2] || 0;
+                if(label.includes("CAJA DE CONTROL")) document.getElementById('st-al-cajas').innerText = row[2] || 0;
+
+                if(metaLabel.includes("100W")) document.getElementById('mt-al-100w').innerText = row[12] || 0;
+                if(metaLabel.includes("150W")) document.getElementById('mt-al-150w').innerText = row[12] || 0;
+                if(metaLabel.includes("CALLE PARA ATENDER")) document.getElementById('mt-al-calles').innerText = row[12] || 0;
+                if(metaLabel.includes("SECTORES A BENEFICIAR")) document.getElementById('mt-al-sectores').innerText = row[12] || 0;
+
+                const dia = row[4]?.toString().trim() || "";
+                if(["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"].some(d => dia.includes(d))) {
+                    agenda.push({ dia, hora: row[5], calle: row[6], sector: row[7], cant: row[8], comuna: row[9] });
+                }
+            });
+
+            document.getElementById('body-alumbrado').innerHTML = agenda.map(r => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="p-3 border-r border-white/5 text-blue-400 font-black">${r.dia}</td>
+                    <td class="p-3 border-r border-white/5 text-slate-500">${r.hora}</td>
+                    <td class="p-3 border-r border-white/5 text-white">${r.calle}</td>
+                    <td class="p-3 border-r border-white/5 text-slate-300">${r.sector}</td>
+                    <td class="p-3 border-r border-white/5 font-black text-white">${r.cant}</td>
+                    <td class="p-3 text-left px-5 text-[9px] uppercase text-slate-400 leading-tight">${r.comuna}</td>
+                </tr>`).join('');
+        }
+
+        function processAsfaltadoCSV(lines) {
+            let agenda = [];
+            document.getElementById('fecha-as-semana').innerText = `Semana: ${lines[1]?.[7] || "Agenda Semanal"}`;
+
+            lines.forEach(row => {
+                const label = row[1]?.toString().trim().toUpperCase() || "";
+                const metaLabel = row[11]?.toString().trim().toUpperCase() || "";
+                
+                if(label.includes("CALLES ATENDIDAS")) document.getElementById('st-as-calles').innerText = row[2] || 0;
+                if(label.includes("SECTORES ATENDIDOS")) document.getElementById('st-as-sectores').innerText = row[2] || 0;
+                if(label.includes("TONELADAS APLICADAS")) document.getElementById('st-as-ton').innerText = row[2] || 0;
+                if(label.includes("HASTA EL")) document.getElementById('st-as-fecha').innerText = row[1] || "";
+
+                if(metaLabel.includes("TONELADAS")) document.getElementById('mt-as-ton').innerText = row[12] || 0;
+                if(metaLabel.includes("CALLE PARA ATENDER")) document.getElementById('mt-as-calles').innerText = row[12] || 0;
+                if(metaLabel.includes("SECTORES A BENEFICIAR")) document.getElementById('mt-as-sectores').innerText = row[12] || 0;
+
+                const dia = row[4]?.toString().trim() || "";
+                if(["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"].some(d => dia.includes(d))) {
+                    agenda.push({ dia, hora: row[5], calle: row[6], sector: row[7], cant: row[8], comuna: row[9] });
+                }
+            });
+
+            document.getElementById('body-asfaltado').innerHTML = agenda.map(r => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="p-3 border-r border-white/5 text-orange-400 font-black">${r.dia}</td>
+                    <td class="p-3 border-r border-white/5 text-slate-500">${r.hora}</td>
+                    <td class="p-3 border-r border-white/5 text-white">${r.calle}</td>
+                    <td class="p-3 border-r border-white/5 text-slate-300">${r.sector}</td>
+                    <td class="p-3 border-r border-white/5 font-black text-orange-400">${r.cant} Ton</td>
+                    <td class="p-3 text-left px-5 text-[9px] uppercase text-slate-400 leading-tight">${r.comuna}</td>
+                </tr>`).join('');
+        }
+
+        function generarPDFReporte() {
+            let elementoObjetivo = null;
+            let nombreArchivo = 'Reporte_Operativo_Guacara.pdf';
+
+            if (!document.getElementById('view-alumbrado').classList.contains('hidden')) {
+                elementoObjetivo = document.getElementById('pdf-container-alumbrado');
+                nombreArchivo = 'Reporte_Plan_Alumbrado_Semanal.pdf';
+            } else if (!document.getElementById('view-asfaltado').classList.contains('hidden')) {
+                elementoObjetivo = document.getElementById('pdf-container-asfaltado');
+                nombreArchivo = 'Reporte_Plan_Asfaltado_Semanal.pdf';
+            } else {
+                elementoObjetivo = document.getElementById('view-gestion');
+                nombreArchivo = 'Reporte_Gestion_Campo_Guacara.pdf';
+            }
+
+            const firmas = elementoObjetivo.querySelector('.print-only');
+            if(firmas) firmas.classList.remove('hidden');
+
+            const opcionesConfig = {
+                margin:       [12, 10, 12, 10],
+                filename:     nombreArchivo,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, backgroundColor: '#060913', useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().set(opcionesConfig).from(elementoObjetivo).save().then(() => {
+                if(firmas) firmas.classList.add('hidden');
+            });
+        }
+
+        function calcPintura() {
+            const n = document.getElementById('input-postes').value;
+            const paleta = document.getElementById('select-paleta').value;
+            const c1 = document.getElementById('res-c1'), c2 = document.getElementById('res-c2');
+            const l1 = document.getElementById('lbl-c1'), l2 = document.getElementById('lbl-c2');
+            if(paleta === 'negro') {
+                l1.innerText = "Negro (1:8):"; l2.innerText = "Aluminio (1:12):";
+                c1.innerText = Math.ceil(n/8) + " Gal"; c2.innerText = Math.ceil(n/12) + " Gal";
+            } else {
+                l1.innerText = "Azul (1:10):"; l2.innerText = "Naranja (1:15):";
+                c1.innerText = Math.ceil(n/10) + " Gal"; c2.innerText = Math.ceil(n/15) + " Gal";
+            }
+        }
+
+        const dz = document.getElementById('drop-zone');
+        dz.onclick = () => document.getElementById('file-input').click();
+        dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('drag-over'); };
+        dz.ondragleave = () => dz.classList.remove('drag-over');
+        dz.ondrop = (e) => {
+            e.preventDefault();
+            dz.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            ejecutarLecturaExcel(file);
+        };
+
+        window.onload = () => {
+            calcPintura();
+            const s = [{n:"YAGUA", p:85, c:"emerald"}, {n:"ALIANZA", p:92, c:"blue"}, {n:"CENTRO", p:70, c:"amber"}, {n:"VIGIRIMA", p:45, c:"red"}];
+            document.getElementById('grid-calor').innerHTML = s.map(sec => `
+                <div class="p-3 rounded-xl border border-${sec.c}-500/10 bg-white/5">
+                    <div class="flex justify-between text-[9px] font-black mb-1"><span>${sec.n}</span><span>${sec.p}%</span></div>
+                    <div class="w-full bg-black/40 h-1 rounded-full overflow-hidden"><div class="bg-${sec.c}-500 h-full" style="width:${sec.p}%"></div></div>
+                </div>`).join('');
+        };
+    </script>
+</body>
+</html>
