@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HDC - Control Operativo Guacara</title>
+    <title>Alcaldía de Guacara - Control Operativo de Gestión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,53 +13,58 @@
             background-color: #060913;
         }
         .glass-panel {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-input {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
             color: #f3f4f6;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .glass-input:focus {
             border-color: #3b82f6;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.07);
             outline: none;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
         }
         .heat-active {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.25);
         }
         .heat-missing {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: #fff; color: #000; }
+            .glass-panel { background: #fff; border: 1px solid #ccc; backdrop-filter: none; }
         }
     </style>
 </head>
 <body class="text-slate-100 min-h-screen pb-12">
 
-    <header class="w-full sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4">
+    <header class="w-full sticky top-0 z-50 glass-panel border-b border-white/10 px-4 sm:px-6 py-4">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-500/20">
-                    <i class="fa-solid fa-layer-group text-white text-sm"></i>
+                    <i class="fa-solid fa-folder-tree text-white text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                        ALCALDÍA DE GUACARA <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30 font-mono">OPERATIVO v2.0</span>
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        ALCALDÍA DE GUACARA <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30 font-mono">CORE v2.1</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Plataforma de Control de Gestión y Seguimiento en Vivo</p>
+                    <p class="text-xs text-slate-400">Ecosistema Dinámico de Control y Seguimiento Operativo</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-2 bg-black/30 p-1.5 rounded-xl border border-white/5">
-                <span class="text-xs font-semibold px-3 py-1 text-slate-300"><i class="fa-solid fa-circle text-emerald-400 text-[8px] mr-2 animate-pulse"></i>Reportes en Vivo</span>
-                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all">
-                    <i class="fa-solid fa-file-pdf"></i> Generar PDF Estadístico
+            <div class="flex items-center gap-2 bg-black/30 p-1.5 rounded-xl border border-white/5 no-print">
+                <span class="text-[11px] font-semibold px-2 text-slate-400"><i class="fa-solid fa-circle text-emerald-400 text-[7px] mr-1.5 animate-pulse"></i>Reportes en Vivo</span>
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all shadow-lg shadow-blue-600/15">
+                    <i class="fa-solid fa-file-pdf text-red-300"></i> Generar PDF Estadístico
                 </button>
             </div>
         </div>
@@ -72,59 +77,59 @@
             <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Infraestructura de Alumbrado</h3>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Infraestructura Lumínica</h3>
                         <i class="fa-solid fa-lightbulb text-amber-400 text-lg"></i>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center text-xs">
                             <span class="text-slate-400">Total Bombillos Municipio:</span>
-                            <input type="number" id="alum-total" value="14200" class="w-24 px-2 py-1 text-right rounded-lg glass-input text-xs font-mono" oninput="calcularAlumbrado()">
+                            <input type="number" id="lum-total" value="14200" class="w-24 px-2 py-1 text-right rounded-lg glass-input font-mono text-xs" oninput="calcularAlumbrado()">
                         </div>
                         <div class="flex justify-between items-center text-xs">
                             <span class="text-slate-400">Instalados / Sustituidos:</span>
-                            <input type="number" id="alum-inst" value="6150" class="w-24 px-2 py-1 text-right rounded-lg glass-input text-xs font-mono" oninput="calcularAlumbrado()">
+                            <input type="number" id="lum-inst" value="6150" class="w-24 px-2 py-1 text-right rounded-lg glass-input font-mono text-xs" oninput="calcularAlumbrado()">
                         </div>
                         <div class="flex justify-between items-center text-xs">
-                            <span class="text-slate-400">Total Postes Registrados:</span>
-                            <input type="number" id="postes-total" value="8400" class="w-24 px-2 py-1 text-right rounded-lg glass-input text-xs font-mono" oninput="calcularAlumbrado()">
+                            <span class="text-slate-400">Total Postes Municipales:</span>
+                            <input type="number" id="postes-total" value="8400" class="w-24 px-2 py-1 text-right rounded-lg glass-input font-mono text-xs" oninput="calcularAlumbrado()">
                         </div>
                         <div class="flex justify-between items-center text-xs">
                             <span class="text-slate-400">Postes por Carretera:</span>
-                            <input type="number" id="postes-carretera" value="3100" class="w-24 px-2 py-1 text-right rounded-lg glass-input text-xs font-mono">
+                            <input type="number" id="postes-carretera" value="3100" class="w-24 px-2 py-1 text-right rounded-lg glass-input font-mono text-xs">
                         </div>
                     </div>
                 </div>
                 
                 <div class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center">
-                    <span class="text-[11px] text-slate-400 uppercase">Eficiencia Lumínica:</span>
-                    <span id="txt-eficiencia" class="text-sm font-bold text-emerald-400 font-mono">0.00%</span>
+                    <span class="text-[11px] text-slate-400 uppercase tracking-wide">Eficiencia Lumínica Global:</span>
+                    <span id="txt-eficiencia" class="text-sm font-black text-emerald-400 font-mono">0.00%</span>
                 </div>
             </div>
 
             <div class="glass-panel p-5 rounded-2xl lg:col-span-2">
-                <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center justify-between mb-2">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Proyección de Costos e Insumos de Pintura</h3>
                     <i class="fa-solid fa-calculator text-blue-400 text-lg"></i>
                 </div>
-                <p class="text-[11px] text-slate-400 mb-4">Cálculo automatizado basado en el rendimiento logístico por paleta cromática.</p>
+                <p class="text-[11px] text-slate-400 mb-4">Cómputo en tiempo real según la escala de rendimiento y paleta cromática asignada.</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Cantidad de Postes a Pintar</label>
+                            <label class="block text-[11px] text-slate-400 mb-1">Cantidad de Postes a Intervenir</label>
                             <input type="number" id="pintura-postes-cant" value="120" class="w-full px-3 py-1.5 rounded-xl glass-input text-xs font-bold font-mono" oninput="calcularProyeccionPintura()">
                         </div>
                         <div>
-                            <label class="block text-[11px] text-slate-400 mb-1">Gama de Colores Seleccionada</label>
-                            <select id="pintura-paleta" class="w-full px-3 py-1.5 rounded-xl glass-input text-xs font-medium" onchange="calcularProyeccionPintura()">
-                                <option value="negro-aluminio">Negro Corporativo & Aluminio Difuso</option>
-                                <option value="azul-naranja">Azul Institucional & Azul con Naranja</option>
+                            <label class="block text-[11px] text-slate-400 mb-1">Paleta Cromática de Gestión</label>
+                            <select id="pintura-paleta" class="w-full px-3 py-1.5 rounded-xl glass-input text-xs font-medium text-slate-200" onchange="calcularProyeccionPintura()">
+                                <option value="negro-aluminio">Negro Corporativo & Aluminio Difuso (8/12)</option>
+                                <option value="azul-naranja">Azul Institucional & Azul con Naranja (10/15)</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="bg-slate-900/50 border border-white/5 rounded-xl p-4 flex flex-col justify-center space-y-2.5">
-                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Insumos de Pintura Requeridos</span>
+                    <div class="bg-slate-900/40 border border-white/5 rounded-xl p-4 flex flex-col justify-center space-y-2">
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Volumen de Suministros Requeridos</span>
                         <div id="desglose-pintura-resultados" class="space-y-2">
                             </div>
                     </div>
@@ -134,10 +139,10 @@
 
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <div class="glass-panel p-5 rounded-2xl h-fit">
+            <div class="glass-panel p-5 rounded-2xl h-fit no-print">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Apertura de Actividad Operativa</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Apertura de Actividad</h3>
                 </div>
                 <form id="form-registro-actividad" class="space-y-4" onsubmit="registrarNuevaActividad(event)">
                     <div>
@@ -145,37 +150,37 @@
                         <input type="text" id="input-titulo" placeholder="Ej: Embellecimiento de la plaza Bolívar de yagua" class="w-full px-3 py-2 rounded-xl glass-input text-xs" required>
                     </div>
                     <div>
-                        <label class="block text-[11px] text-slate-400 mb-1">Eje de Infraestructura</label>
-                        <select id="input-infraestructura" class="w-full px-3 py-2 rounded-xl glass-input text-xs">
-                            <option value="Plaza">Plazas Públicas</option>
+                        <label class="block text-[11px] text-slate-400 mb-1">Eje Operativo de Infraestructura</label>
+                        <select id="input-infraestructura" class="w-full px-3 py-2 rounded-xl glass-input text-xs text-slate-200">
+                            <option value="Plaza">Plazas Públicas (Plaza Bolívar)</option>
                             <option value="CDI">Centros de Diagnóstico Integral (CDI)</option>
-                            <option value="Parada">Paradas de Transporte</option>
-                            <option value="Esquina">Esquinas Principales</option>
+                            <option value="Parada">Paradas de Transporte Principal</option>
+                            <option value="Esquina">Esquinas Principales de Intersección</option>
                             <option value="Fachada">Reparación de Fachadas</option>
-                            <option value="Brocales">Pintura de Brocales / Vías</option>
+                            <option value="Brocales">Brocales y Pintura Vial</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] text-slate-400 mb-1">Fecha de Ejecución de Campo</label>
-                        <input type="date" id="input-fecha" class="w-full px-3 py-2 rounded-xl glass-input text-xs" required>
+                        <label class="block text-[11px] text-slate-400 mb-1">Fecha de Despliegue de Campo</label>
+                        <input type="date" id="input-fecha" class="w-full px-3 py-2 rounded-xl glass-input text-xs text-slate-200" required>
                     </div>
                     <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 text-white py-2 rounded-xl text-xs font-bold tracking-wide shadow-md transition-all">
-                        <i class="fa-solid fa-square-plus mr-1.5"></i> Generar Cuadro de Desglose
+                        <i class="fa-solid fa-folder-plus mr-1.5"></i> Inicializar Cuadro de Desglose
                     </button>
                 </form>
             </div>
 
             <div class="glass-panel p-5 rounded-2xl lg:col-span-2">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200 mb-1">Cuadro de Desgloses y Métricas de Éxito</h3>
-                <p class="text-[11px] text-slate-400 mb-4">Seguimiento interactivo de fases, ejecuciones físicas y logros finales.</p>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200 mb-1">Cuadro de Desgloses Operativos</h3>
+                <p class="text-[11px] text-slate-400 mb-4">Registro en vivo de micro-actividades, avances por fases de ejecución y logros finales.</p>
                 
                 <div class="overflow-x-auto w-full">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-white/10 text-[10px] uppercase tracking-wider text-slate-400 bg-black/30">
+                            <tr class="border-b border-white/10 text-[10px] uppercase tracking-wider text-slate-400 bg-black/40">
                                 <th class="p-3">Eje / Actividad Principal</th>
-                                <th class="p-3">Micro-Actividades & Rendimiento</th>
-                                <th class="p-3 text-center">Fase Actual</th>
+                                <th class="p-3">Micro-Actividades & Ejecuciones</th>
+                                <th class="p-3 text-center">Fase de Avance</th>
                                 <th class="p-3 text-right">Logro Final</th>
                             </tr>
                         </thead>
@@ -187,13 +192,13 @@
         </section>
 
         <section class="glass-panel p-5 rounded-2xl">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
                 <div>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Mapa de Calor Operativo (Territorios de Guacara)</h3>
-                    <p class="text-[11px] text-slate-400">Control visual de áreas abarcadas vs cuadrantes pendientes por desplegar.</p>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Matriz Mapa de Calor Territorial (Guacara)</h3>
+                    <p class="text-[11px] text-slate-400">Control de cobertura de cuadrantes abarcados vs tramos faltantes por abordar.</p>
                 </div>
-                <div id="kpi-cobertura-global" class="text-xs font-mono font-bold bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1 rounded-xl">
-                    Cargando Cobertura...
+                <div id="kpi-cobertura-global" class="text-xs font-mono font-bold bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1 rounded-xl w-fit">
+                    Estableciendo Cobertura...
                 </div>
             </div>
             
@@ -204,43 +209,44 @@
     </main>
 
     <script>
-        // MEMORIA BASE COMPILADA DE GESTIÓN MUNICIPAL (VIVO)
+        // MEMORIA BASE INICIALIZADA (CONTROL DE OPERACIONES)
         let bancoActividades = [
             {
                 id: 1,
-                titulo: "Embellecimiento de la Plaza Bolívar de Yagua",
+                titulo: "Embellecimiento Integral Plaza Bolívar de Yagua",
                 infraestructura: "Plaza",
                 fecha: "2026-05-12",
-                fase: "Fase 2: Pintura y Acabados",
+                fase: "Fase 2: Ejecución de Pintura",
                 microActividades: [
                     { nombre: "Cambio de Publicidad / Cartelería", meta: 6, completado: 6, unidad: "unidades" },
-                    { nombre: "Pintura de Estructuras Centrales", meta: 15, completado: 12, unidad: "postes/bancos" },
+                    { nombre: "Pintura de Estructuras e Interiores", meta: 15, completado: 11, unidad: "postes/bancos" },
                     { nombre: "Reparación de Fachada de Entorno", meta: 4, completado: 2, unidad: "fachadas" }
                 ]
             },
             {
                 id: 2,
-                titulo: "Intervención Vial Eje Brocales Avenida Francisco de Miranda",
+                titulo: "Embellecimiento de Paradas Principales y Pintura de Brocales Eje Centro",
                 infraestructura: "Brocales",
                 fecha: "2026-05-14",
-                fase: "Fase 3: Entrega de Logro Final",
+                fase: "Fase 3: Logro Final Cumplido",
                 microActividades: [
-                    { nombre: "Pintura de Postes (Azul con Naranja)", meta: 50, completado: 50, unidad: "postes" },
-                    { nombre: "Tramos de Brocales Avanzados", meta: 1200, completado: 1200, unidad: "metros" }
+                    { nombre: "Pintura de Postes (Gama Azul/Naranja)", meta: 40, completado: 40, unidad: "postes" },
+                    { nombre: "Tramos de Brocales Avanzados", meta: 800, completado: 800, unidad: "metros" },
+                    { nombre: "Embellecimiento de Paradas de Esquina", meta: 5, completado: 5, unidad: "paradas" }
                 ]
             }
         ];
 
         let sectoresGuacara = [
-            { nombre: "Yagua", estatus: "abarcado", porcentaje: 90 },
-            { nombre: "Ciudad Alianza", estatus: "abarcado", porcentaje: 75 },
-            { nombre: "Guacara Centro", estatus: "abarcado", porcentaje: 80 },
-            { nombre: "Aragüita", estatus: "pendiente", porcentaje: 15 },
-            { nombre: "Vigirima", estatus: "abarcado", porcentaje: 60 },
-            { nombre: "El Toco", estatus: "pendiente", porcentaje: 5 }
+            { nombre: "Yagua", estatus: "abarcado", porcentaje: 95 },
+            { nombre: "Ciudad Alianza", estatus: "abarcado", porcentaje: 80 },
+            { nombre: "Guacara Centro", estatus: "abarcado", porcentaje: 85 },
+            { nombre: "Aragüita", estatus: "pendiente", porcentaje: 20 },
+            { nombre: "Vigirima", estatus: "abarcado", porcentaje: 65 },
+            { nombre: "El Toco", estatus: "pendiente", porcentaje: 10 }
         ];
 
-        // INICIALIZADOR DE INTERFAZ DEL PORTAL
+        // ACTIVADOR PRINCIPAL DEL PORTAL WEB
         document.addEventListener("DOMContentLoaded", () => {
             renderizarCuadroDesgloses();
             calcularAlumbrado();
@@ -248,35 +254,32 @@
             renderizarMapaCalor();
         });
 
-        // 1. CONTROLADOR DE CUADRO DE DESGLOSES (REACTIVO)
+        // CONECTOR: RENDERIZACIÓN REACTIVA DEL CUADRO DE DESGLOSES
         function renderizarCuadroDesgloses() {
             const tbody = document.getElementById("tabla-actividades-body");
             tbody.innerHTML = "";
 
             bancoActividades.forEach(act => {
-                let totalMeta = 0;
-                let totalCompletado = 0;
+                let totalMeta = 0, totalCompletado = 0;
 
-                // Generar los bloques visuales internos de micro-actividades
                 let htmlMicros = act.microActividades.map(m => {
                     totalMeta += m.meta;
                     totalCompletado += m.completado;
-                    const pctIndividual = Math.round((m.completado / m.meta) * 100);
+                    const pctInd = Math.round((m.completado / m.meta) * 100);
                     return `
                         <div class="mb-2 last:mb-0 bg-black/20 p-2 rounded-lg border border-white/5">
                             <div class="flex justify-between items-center text-[11px] text-slate-300 mb-1">
-                                <span class="font-medium">${m.nombre}</span>
-                                <span class="font-mono text-blue-400 font-semibold">${m.completado}/${m.meta} ${m.unidad} (${pctIndividual}%)</span>
+                                <span>${m.nombre}</span>
+                                <span class="font-mono text-blue-400 font-bold">${m.completado}/${m.meta} ${m.unidad} (${pctInd}%)</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-blue-500 to-indigo-400 h-full" style="width: ${pctIndividual}%"></div>
+                                <div class="bg-gradient-to-r from-blue-500 to-indigo-400 h-full" style="width: ${pctInd}%"></div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }).join('');
 
-                const porcentajeActividadTotal = Math.round((totalCompletado / totalMeta) * 100);
-                const esExitoCompleto = totalCompletado === totalMeta;
+                const porcentajeAbsoluto = Math.round((totalCompletado / totalMeta) * 100);
+                const esExito = totalCompletado === totalMeta;
 
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-white/[0.01] transition-colors";
@@ -288,138 +291,126 @@
                     </td>
                     <td class="p-3 align-top">${htmlMicros}</td>
                     <td class="p-3 align-top text-center">
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-400 border border-white/5 inline-block mb-1">${act.fase}</span>
-                        <div class="text-[11px] font-mono font-bold text-slate-300">${porcentajeActividadTotal}% Absoluto</div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300 border border-white/5 inline-block mb-1">${act.fase}</span>
+                        <div class="text-[11px] font-mono font-bold text-slate-400">${porcentajeAbsoluto}% Completado</div>
                     </td>
                     <td class="p-3 align-top text-right font-bold">
-                        <div class="${esExitoCompleto ? 'text-emerald-400' : 'text-amber-400'} flex items-center justify-end gap-1.5 text-xs">
-                            ${esExitoCompleto ? '<i class="fa-solid fa-circle-check text-sm"></i> Cumplido' : '<i class="fa-solid fa-circle-notch animate-spin text-sm"></i> Ejecutando'}
+                        <div class="${esExito ? 'text-emerald-400' : 'text-amber-400'} flex items-center justify-end gap-1.5 text-xs">
+                            ${esExito ? '<i class="fa-solid fa-circle-check text-sm"></i> Logro' : '<i class="fa-solid fa-spinner animate-spin text-sm"></i> En Curso'}
                         </div>
-                    </td>
-                `;
+                    </td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        // 2. ACCIONADOR: REGISTRAR NUEVA ACTIVIDAD DESDE EL EMULADOR DE FORMULARIO
+        // ACCIÓN: CREACIÓN DE NUEVO REGISTRO DESDE INTERFAZ
         function registrarNuevaActividad(e) {
             e.preventDefault();
             const titulo = document.getElementById("input-titulo").value;
             const infraestructura = document.getElementById("input-infraestructura").value;
             const fecha = document.getElementById("input-fecha").value;
 
-            // Inyección automática de Micro-actividades Inteligentes según tipo de infraestructura elegida
-            let microPlantilla = [];
-            if(infraestructura === "Brocales" || infraestructura === "Vial") {
-                microPlantilla = [
-                    { nombre: "Metros de Tramo Avanzado / Pintura", meta: 500, completado: 0, unidad: "metros" },
-                    { nombre: "Reparación/Remoción Vial", meta: 100, completado: 0, unidad: "metros" }
+            let plantillaMicros = [];
+            if(infraestructura === "Brocales" || infraestructura === "Esquina") {
+                plantillaMicros = [
+                    { nombre: "Reparación de Fachadas / Esquinas", meta: 3, completado: 0, unidad: "esquinas" },
+                    { nombre: "Pintura de Postes Asignados", meta: 12, completado: 0, unidad: "postes" },
+                    { nombre: "Tramos de Brocales Pintados", meta: 400, completado: 0, unidad: "metros" }
                 ];
-            } else if(infraestructura === "Plaza" || infraestructura === "Fachada") {
-                microPlantilla = [
-                    { nombre: "Pintura y Embellecimiento", meta: 10, completado: 0, unidad: "estructuras" },
-                    { nombre: "Reparación de Fachadas Específicas", meta: 2, completado: 0, unidad: "unidades" },
-                    { nombre: "Renovación de Cartelería/Publicidad", meta: 4, completado: 0, unidad: "unidades" }
+            } else if(infraestructura === "CDI" || infraestructura === "Parada") {
+                plantillaMicros = [
+                    { nombre: "Embellecimiento e Infraestructura", meta: 1, completado: 0, unidad: "módulo" },
+                    { nombre: "Pintura General y Fachadas", meta: 4, completado: 0, unidad: "estructuras" }
                 ];
-            } else { // CDI, Paradas o Esquinas Principales
-                microPlantilla = [
-                    { nombre: "Embellecimiento General de Espacio", meta: 1, completado: 0, unidad: "área" },
-                    { nombre: "Pintura de Postes Limítrofes", meta: 8, completado: 0, unidad: "postes" }
+            } else {
+                plantillaMicros = [
+                    { nombre: "Intervenciones Estructurales", meta: 5, completado: 0, unidad: "avances" },
+                    { nombre: "Sustituciones Complementarias", meta: 2, completado: 0, unidad: "unidades" }
                 ];
             }
 
-            const nuevaActividad = {
+            bancoActividades.unshift({
                 id: bancoActividades.length + 1,
-                titulo,
-                infraestructura,
-                fecha,
-                fase: "Fase 1: Despliegue de Campo",
-                microActividades: microPlantilla
-            };
+                titulo, infraestructura, fecha,
+                fase: "Fase 1: Registro Inicial",
+                microActividades: plantillaMicros
+            });
 
-            bancoActividades.unshift(nuevaActividad);
             renderizarCuadroDesgloses();
             document.getElementById("form-registro-actividad").reset();
         }
 
-        // 3. MATRIZ LOGÍSTICA DE RENDIMIENTO DE PINTURA (ALGORITMO ESTRICTO SOLICITADO)
+        // COMPUTADOR LOGÍSTICO: CÁLCULO DE PINTURA (FÓRMULA EXACTA REQUERIDA)
         function calcularProyeccionPintura() {
-            const postesACubrir = parseInt(document.getElementById("pintura-postes-cant").value) || 0;
-            const paletaCromatica = document.getElementById("pintura-paleta").value;
-            const contenedorResultados = document.getElementById("desglose-pintura-resultados");
+            const postes = parseInt(document.getElementById("pintura-postes-cant").value) || 0;
+            const paleta = document.getElementById("pintura-paleta").value;
+            const contenedor = document.getElementById("desglose-pintura-resultados");
 
-            let galonesColorA = 0;
-            let galonesColorB = 0;
-            let labelA = "";
-            let labelB = "";
+            let galA = 0, galB = 0, lblA = "", lblB = "";
 
-            if(paletaCromatica === "negro-aluminio") {
-                // REGLA MATEMÁTICA: 1 galón negro = 8 postes | 1 galón aluminio difuso = 12 postes
-                galonesColorA = Math.ceil(postesACubrir / 8);
-                galonesColorB = Math.ceil(postesACubrir / 12);
-                labelA = "Pintura Negra Corporativa (1 Galón / 8 Postes)";
-                labelB = "Aluminio Difuso Técnico (1 Galón / 12 Postes)";
+            if(paleta === "negro-aluminio") {
+                // Algoritmo: 1 galón negro = 8 postes | 1 galón aluminio difuso = 12 postes
+                galA = Math.ceil(postes / 8);
+                galB = Math.ceil(postes / 12);
+                lblA = "Galones de Pintura Negra (1 gal / 8 postes)";
+                lblB = "Galones de Aluminio Difuso (1 gal / 12 postes)";
             } else {
-                // PALETA: Azul Institucional & Azul con Naranja (Rendimiento estándar táctico: 1 gal = 10 postes base / 15 postes detalles naranja)
-                galonesColorA = Math.ceil(postesACubrir / 10);
-                galonesColorB = Math.ceil(postesACubrir / 15);
-                labelA = "Azul Institucional Base (1 Galón / 10 Postes)";
-                labelB = "Naranja de Alta Visibilidad (1 Galón / 15 Postes)";
+                // Algoritmo Alternativo: Azul e Inyecciones de Naranja (1 gal azul = 10 postes | 1 gal naranja = 15 postes)
+                galA = Math.ceil(postes / 10);
+                galB = Math.ceil(postes / 15);
+                lblA = "Galones de Azul Institucional (1 gal / 10 postes)";
+                lblB = "Galones de Pintura Naranja (1 gal / 15 postes)";
             }
 
-            contenedorResultados.innerHTML = `
-                <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 font-medium">${labelA}:</span>
-                    <span class="font-mono font-bold text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">${galonesColorA} Galón(es)</span>
+            contenedor.innerHTML = `
+                <div class="flex justify-between items-center bg-black/30 p-2 rounded-lg border border-white/5">
+                    <span class="text-[11px] text-slate-400">${lblA}:</span>
+                    <span class="font-mono font-bold text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20">${galA} Gal</span>
                 </div>
-                <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 font-medium">${labelB}:</span>
-                    <span class="font-mono font-bold text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">${galonesColorB} Galón(es)</span>
-                </div>
-            `;
+                <div class="flex justify-between items-center bg-black/30 p-2 rounded-lg border border-white/5">
+                    <span class="text-[11px] text-slate-400">${lblB}:</span>
+                    <span class="font-mono font-bold text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">${galB} Gal</span>
+                </div>`;
         }
 
-        // 4. MÓDULO MATEMÁTICO DE ALUMBRADO
+        // CONTROLADOR DE MÉTRICAS LUMÍNICAS
         function calcularAlumbrado() {
-            const totalBombillos = parseInt(document.getElementById("lum-total").value) || 0;
-            const instaladosBombillos = parseInt(document.getElementById("lum-inst").value) || 0;
-
-            if(totalBombillos > 0) {
-                const eficiencia = ((instaladosBombillos / totalBombillos) * 100).toFixed(2);
-                document.getElementById("txt-eficiencia").innerText = `${eficiencia} %`;
+            const total = parseInt(document.getElementById("lum-total").value) || 0;
+            const inst = parseInt(document.getElementById("lum-inst").value) || 0;
+            if(total > 0) {
+                document.getElementById("txt-eficiencia").innerText = `${((inst / total) * 100).toFixed(2)} %`;
             }
         }
 
-        // 5. MOTOR DE RENDERIZADO DEL MAPA DE CALOR TERRITORIAL
+        // COMPONENTE: GENERACIÓN DINÁMICA DEL MAPA DE CALOR
         function renderizarMapaCalor() {
             const contenedor = document.getElementById("contenedor-mapa-calor");
             contenedor.innerHTML = "";
-            let contadorAbarcados = 0;
+            let abarcados = 0;
 
             sectoresGuacara.forEach(sec => {
                 const esAbarcado = sec.estatus === "abarcado";
-                if(esAbarcado) contadorAbarcados++;
+                if(esAbarcado) abarcados++;
 
                 contenedor.innerHTML += `
-                    <div class="p-3.5 rounded-2xl border flex flex-col justify-between ${esAbarcado ? 'heat-active' : 'heat-missing'}">
-                        <div class="flex justify-between items-start">
+                    <div class="p-3 rounded-2xl border flex flex-col justify-between ${esAbarcado ? 'heat-active' : 'heat-missing'}">
+                        <div class="flex justify-between items-center">
                             <span class="font-bold text-xs text-slate-200">${sec.nombre}</span>
-                            <span class="h-2 w-2 rounded-full ${esAbarcado ? 'bg-emerald-400 shadow-md shadow-emerald-400' : 'bg-red-400 shadow-md shadow-red-400'}"></span>
+                            <span class="h-2 w-2 rounded-full ${esAbarcado ? 'bg-emerald-400' : 'bg-red-400'}"></span>
                         </div>
                         <div class="mt-4">
                             <div class="flex justify-between text-[10px] text-slate-400 font-mono mb-1">
                                 <span>Abordado:</span>
-                                <span class="font-bold">${sec.porcentaje}%</span>
+                                <span class="font-bold">${sec.percentage || sec.porcentaje}%</span>
                             </div>
                             <div class="w-full bg-black/40 h-1 rounded-full overflow-hidden">
-                                <div class="h-full ${esAbarcado ? 'bg-emerald-500' : 'bg-red-500'}" style="width: ${sec.porcentaje}%"></div>
+                                <div class="h-full ${esAbarcado ? 'bg-emerald-500' : 'bg-red-500'}" style="width: ${sec.percentage || sec.porcentaje}%"></div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
-            document.getElementById("kpi-cobertura-global").innerHTML = `<i class="fa-solid fa-map-location-dot mr-1.5"></i> Abordaje: ${contadorAbarcados} / ${sectoresGuacara.length} Territorios`;
+            document.getElementById("kpi-cobertura-global").innerHTML = `<i class="fa-solid fa-map-location-dot mr-1.5"></i> Abordaje: ${abarcados} / ${sectoresGuacara.length} Territorios`;
         }
     </script>
 </body>
