@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirección Executive - Control Operativo Guacara</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #060913; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); color: white; }
+        .active-tab { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        
+        /* Estilos de Impresión Limpios */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            .glass { background: white !important; border: 1px solid #000 !important; color: black !important; backdrop-filter: none !important; box-shadow: none !important; }
+            table { border-collapse: collapse; width: 100%; border: 1px solid #000; }
+            th, td { border: 1px solid #000 !important; color: black !important; padding: 6px !important; }
+            .bg-blue-600 { background: #e2e8f0 !important; color: #000 !important; }
+            .text-blue-400, .text-emerald-400 { color: #000 !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <header class="w-full sticky top-0 z-50 glass border-b border-white/10 px-4 py-3.5 no-print">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-sliders text-white text-base"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold tracking-tight uppercase">Alcaldía de Guacara <span class="text-blue-400">| Dirección Ejecutiva</span></h1>
+                    <p class="text-[9px] text-slate-400 font-black tracking-[0.15em]">ECOSISTEMA OPERATIVO MUNICIPAL</p>
+                </div>
+            </div>
+
+            <nav class="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                <button onclick="cambiarPortal('postes')" id="nav-postes" class="active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-bolt"></i> Plan Postes
+                </button>
+                <button onclick="cambiarPortal('actividades')" id="nav-actividades" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-list-check"></i> Control de Obras
+                </button>
+            </nav>
+
+            <button onclick="window.print()" class="bg-white/5 border border-white/10 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-white/10 transition-all flex items-center gap-2 no-print">
+                <i class="fa-solid fa-print text-blue-400"></i> Imprimir Balance
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 mt-6">
+
+        <div id="portal-postes" class="space-y-6">
+            
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass p-4 rounded-2xl border-l-4 border-blue-500">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Total Postes Municipio</span>
+                    <span class="text-2xl font-black text-white font-mono" id="global-total-postes">0</span>
+                </div>
+                <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Logros Pintados</span>
+                    <span class="text-2xl font-black text-emerald-400 font-mono" id="global-pintados">0</span>
+                </div>
+                <div class="glass p-4 rounded-2xl border-l-4 border-amber-500">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Postes Pendientes</span>
+                    <span class="text-2xl font-black text-amber-400 font-mono" id="global-pendientes">0</span>
+                </div>
+                <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500">
+                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Rendimiento General</span>
+                    <span class="text-2xl font-black text-indigo-400 font-mono" id="global-porcentaje">0%</span>
+                </div>
+            </section>
+
+            <section class="glass p-5 rounded-2xl no-print">
+                <h3 class="text-xs font-black uppercase text-blue-400 tracking-wider mb-4">
+                    <i class="fa-solid fa-route mr-1.5"></i> Configuración Táctica de Trayectos y Conteo
+                </h3>
+                <form onsubmit="agregarNuevoTrayecto(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                    <div>
+                        <label class="text-[10px] uppercase font-black text-slate-400 mb-1 block">Tipo de Trayecto</label>
+                        <select id="trayecto-categoria" class="w-full p-2.5 rounded-xl glass-input text-xs outline-none text-slate-300">
+                            <option value="Autopista">Autopista</option>
+                            <option value="Carretera Nacional">Carretera Nacional</option>
+                            <option value="Avenidas Principales">Avenidas Principales</option>
+                            <option value="Espacios Estratégicos">Espacios Estratégicos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-black text-slate-400 mb-1 block">Especificación / Segmento Territorial</label>
+                        <input type="text" id="trayecto-segmento" placeholder="Ej: Entrada hasta dist. Yagua" class="w-full p-2.5 rounded-xl glass-input text-xs outline-none focus:border-blue-500 text-white" required>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-black text-slate-400 mb-1 block">Tipo de Poste</label>
+                        <select id="trayecto-tipo-poste" class="w-full p-2.5 rounded-xl glass-input text-xs outline-none text-slate-300">
+                            <option value="Poste Alumbrado">Poste Alumbrado</option>
+                            <option value="Poste de Baja Tensión">Poste de Baja Tensión</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] uppercase font-black text-slate-400 mb-1 block">Total Postes</label>
+                            <input type="number" id="trayecto-total" value="10" min="1" class="w-full p-2.5 rounded-xl glass-input text-xs text-center font-bold font-mono outline-none focus:border-blue-500 text-white" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase font-black text-slate-400 mb-1 block">Pintados</label>
+                            <input type="number" id="trayecto-pintados" value="0" min="0" class="w-full p-2.5 rounded-xl glass-input text-xs text-center font-bold font-mono outline-none focus:border-blue-500 text-white" required>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 p-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Fijar Trayecto
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="glass p-5 rounded-2xl space-y-4">
+                <div>
+                    <h3 class="text-sm font-black uppercase text-blue-400 tracking-wider">Control Operativo por Trayectos y Segmentos</h3>
+                    <p class="text-[11px] text-slate-400">Resultados consolidados en tiempo real calculados según el caminado técnico en calle.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-blue-600/15 text-blue-400 uppercase font-black tracking-tight text-[10px]">
+                                <th class="p-3 text-left">Eje / Tipo Trayecto</th>
+                                <th class="p-3 text-left">Segmento Territorial (Especificación)</th>
+                                <th class="p-3">Tipo de Poste</th>
+                                <th class="p-3">Total Postes</th>
+                                <th class="p-3 w-32">Pintados (Logro)</th>
+                                <th class="p-3">Pendientes</th>
+                                <th class="p-3">Pintura Base (1:4)</th>
+                                <th class="p-3">Pintura Contraste (1:8)</th>
+                                <th class="p-3">Brochas (3")</th>
+                                <th class="p-3 text-right">Alcance</th>
+                                <th class="p-3 text-center no-print w-12"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-postes-body" class="divide-y divide-white/5 font-medium">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div id="portal-actividades" class="hidden space-y-6">
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="glass p-5 rounded-2xl h-fit no-print">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-blue-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-plus"></i> Registrar Proyecto Operativo
+                    </h3>
+                    <form onsubmit="crearNuevaObra(event)" class="space-y-4">
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Nombre de la Actividad</label>
+                            <input type="text" id="obra-titulo" placeholder="Ej: Recuperación de Cancha Yagua" class="w-full p-2.5 rounded-xl glass-input text-xs outline-none focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Tipo de Gestión</label>
+                            <select id="obra-tipo" class="w-full p-2.5 rounded-xl glass-input text-xs outline-none text-slate-300">
+                                <option value="Embellecimiento">Embellecimiento</option>
+                                <option value="Construcción">Construcción</option>
+                                <option value="Recuperación de Espacio">Recuperación de Espacio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+                            Inicializar Actividad
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Seguimiento Dinámico de Micro-Actividades</h3>
+                        <span class="text-[10px] bg-slate-800 text-slate-300 px-3 py-1 rounded-full font-mono border border-white/5 font-bold uppercase">Balance de Logros</span>
+                    </div>
+                    
+                    <div id="contenedor-obras" class="space-y-4">
+                        </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <div class="hidden print-only fixed bottom-10 left-0 w-full grid grid-cols-3 text-center text-[10px] uppercase font-black px-12">
+        <div class="border-t border-black pt-2 mx-6">Coordinador de Campo</div>
+        <div class="border-t border-black pt-2 mx-6">Dirección Ejecutiva</div>
+        <div class="border-t border-black pt-2 mx-6">Alcaldía de Guacara</div>
+    </div>
+
+    <script>
+        // ================= BASE DE DATOS LOCAL INICIALIZADA DE TRAYECTOS COMPLETA =================
+        let tramosPostes = [
+            { id: 1, categoria: "Autopista", segmento: "Entrada hasta Dist. Yagua", tipoPoste: "Poste Alumbrado", total: 12, pintados: 7 },
+            { id: 2, categoria: "Autopista", segmento: "Tramo Dist. Yagua - Variante", tipoPoste: "Poste Alumbrado", total: 25, pintados: 12 },
+            { id: 3, categoria: "Carretera Nacional", segmento: "Eje Guacara - Los Guayos", tipoPoste: "Poste de Baja Tensión", total: 40, pintados: 30 },
+            { id: 4, categoria: "Avenidas Principales", segmento: "Avenida Piar (Eje Centro)", tipoPoste: "Poste Alumbrado", total: 18, pintados: 18 },
+            { id: 5, categoria: "Espacios Estratégicos", segmento: "Alrededores Plaza de Yagua", tipoPoste: "Poste de Baja Tensión", total: 15, pintados: 0 }
+        ];
+
+        let proyectosObras = [
+            {
+                id: 1,
+                titulo: "Recuperación e Iluminación de Cancha de Usos Múltiples",
+                tipo: "Recuperación de Espacio",
+                micros: [
+                    { id: 501, nombre: "Saneamiento de brocales y cercado", cumplido: true },
+                    { id: 502, nombre: "Aplicación de pintura de alto tráfico en losas", cumplido: false },
+                    { id: 503, nombre: "Instalación de 4 reflectores LED industriales", cumplido: true }
+                ]
+            }
+        ];
+
+        function cambiarPortal(portal) {
+            document.getElementById('portal-postes').classList.toggle('hidden', portal !== 'postes');
+            document.getElementById('portal-actividades').classList.toggle('hidden', portal !== 'actividades');
+            
+            document.getElementById('nav-postes').className = portal === 'postes' ? 'active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 uppercase' : 'px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 uppercase';
+            document.getElementById('nav-actividades').className = portal === 'actividades' ? 'active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 uppercase' : 'px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 uppercase';
+        }
+
+        // ACCIÓN QUIRÚRGICA: ACCIONADOR PARA INYECTAR UN NUEVO TRAYECTO DINÁMICO DESDE LA UI
+        function agregarNuevoTrayecto(e) {
+            e.preventDefault();
+            const categoria = document.getElementById('trayecto-categoria').value;
+            const segmento = document.getElementById('trayecto-segmento').value.trim();
+            const tipoPoste = document.getElementById('trayecto-tipo-poste').value;
+            const total = parseInt(document.getElementById('trayecto-total').value) || 0;
+            let pintados = parseInt(document.getElementById('trayecto-pintados').value) || 0;
+
+            if (pintados > total) pintados = total;
+
+            tramosPostes.push({
+                id: Date.now(),
+                categoria,
+                segmento,
+                tipoPoste,
+                total,
+                pintados
+            });
+
+            // Resetear inputs tácticos
+            document.getElementById('trayecto-segmento').value = "";
+            document.getElementById('trayecto-total').value = "10";
+            document.getElementById('trayecto-pintados').value = "0";
+
+            calcularYRenderizarPostes();
+        }
+
+        function eliminarTrayecto(id) {
+            tramosPostes = tramosPostes.filter(t => t.id !== id);
+            calcularYRenderizarPostes();
+        }
+
+        // ================= RENDERIZADO Y LOGÍTICA DE CÓMPUTO DE MATERIALES =================
+        function calcularYRenderizarPostes() {
+            const tbody = document.getElementById('tabla-postes-body');
+            tbody.innerHTML = "";
+
+            let gTotal = 0, gPintados = 0, gPendientes = 0;
+
+            tramosPostes.forEach((tramo, index) => {
+                let pendientes = tramo.total - tramo.pintados;
+                let pct = tramo.total > 0 ? Math.round((tramo.pintados / tramo.total) * 100) : 0;
+                
+                // Algoritmos de consumo exactos solicitados
+                let basePintura = Math.ceil(tramo.pintados / 4); // 1 Galón rinde 4 postes (Aluminio o Naranja)
+                let contrastePintura = Math.ceil(tramo.pintados / 8); // 1 Galón rinde 8 postes (Negro o Azul)
+                let brochas = Math.ceil((tramo.pintados / 15) * 2); // 2 unidades por cada 15 postes
+                if (brochas < 1 && tramo.pintados > 0) brochas = 1;
+
+                // Relación cromática según la infraestructura
+                let lblBase = tramo.tipoPoste === "Poste Alumbrado" ? "Naranja" : "Aluminio";
+                let lblContraste = tramo.tipoPoste === "Poste Alumbrado" ? "Azul" : "Negro";
+
+                gTotal += tramo.total;
+                gPintados += tramo.pintados;
+                gPendientes += pendientes;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/[0.02] border-b border-white/5 transition-all">
+                        <td class="p-3 text-left font-black text-blue-400 text-[11px] uppercase tracking-wide">${tramo.categoria}</td>
+                        <td class="p-3 text-left font-bold text-slate-200">${tramo.segmento}</td>
+                        <td class="p-3 text-slate-400 text-[10px] uppercase font-bold tracking-tight">${tramo.tipoPoste}</td>
+                        <td class="p-3">
+                            <input type="number" value="${tramo.total}" min="1" 
+                                oninput="actualizarTotalTramo(${index}, this.value)" 
+                                class="w-16 p-1 text-center font-bold rounded bg-slate-900 border border-white/10 text-white focus:border-blue-500 font-mono no-print">
+                            <span class="hidden print-only">${tramo.total}</span>
+                        </td>
+                        <td class="p-3">
+                            <input type="number" value="${tramo.pintados}" min="0" max="${tramo.total}" 
+                                oninput="actualizarPintadosTramo(${index}, this.value)" 
+                                class="w-16 p-1 text-center font-bold rounded bg-slate-900 border border-white/10 text-emerald-400 focus:border-blue-500 font-mono no-print">
+                            <span class="hidden print-only">${tramo.pintados}</span>
+                        </td>
+                        <td class="p-3 font-mono font-bold text-amber-500">${pendientes}</td>
+                        <td class="p-3 text-slate-300 font-mono text-[11px]">${basePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-sans font-bold">${lblBase}</span></td>
+                        <td class="p-3 text-slate-300 font-mono text-[11px]">${contrastePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-sans font-bold">${lblContraste}</span></td>
+                        <td class="p-3 text-slate-300 font-mono font-bold">${tramo.pintados > 0 ? brochas : 0} Und</td>
+                        <td class="p-3 text-right font-mono font-black ${pct === 100 ? 'text-emerald-400' : 'text-blue-400'}">${pct}%</td>
+                        <td class="p-3 text-center no-print">
+                            <button onclick="eliminarTrayecto(${tramo.id})" class="text-slate-600 hover:text-red-400 transition-all">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('global-total-postes').innerText = gTotal;
+            document.getElementById('global-pintados').innerText = gPintados;
+            document.getElementById('global-pendientes').innerText = gPendientes;
+            document.getElementById('global-porcentaje').innerText = gTotal > 0 ? `${Math.round((gPintados / gTotal) * 100)}%` : `0%`;
+        }
+
+        function actualizarTotalTramo(index, valor) {
+            let val = parseInt(valor) || 1;
+            tramosPostes[index].total = val;
+            if (tramosPostes[index].pintados > val) tramosPostes[index].pintados = val;
+            calcularYRenderizarPostes();
+        }
+
+        function actualizarPintadosTramo(index, valor) {
+            let val = parseInt(valor) || 0;
+            if(val > tramosPostes[index].total) val = tramosPostes[index].total;
+            tramosPostes[index].pintados = val;
+            calcularYRenderizarPostes();
+        }
+
+        // ================= GESTIÓN Y BALANCE DE PROYECTOS Y MICROACTIVIDADES =================
+        function renderizarObras() {
+            const contenedor = document.getElementById('contenedor-obras');
+            contenedor.innerHTML = "";
+
+            proyectosObras.forEach((obra, oIdx) => {
+                let completadas = obra.micros.filter(m => m.cumplido).length;
+                let totalMicros = obra.micros.length;
+                let pctObra = totalMicros > 0 ? Math.round((completadas / totalMicros) * 100) : 0;
+                let esLogroFinal = completadas === totalMicros && totalMicros > 0;
+
+                let htmlMicros = obra.micros.map((m, mIdx) => `
+                    <div class="flex items-center justify-between p-2.5 bg-black/20 rounded-xl border border-white/5 hover:border-white/10 transition-all">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" ${m.cumplido ? 'checked' : ''} 
+                                onclick="alternarMicroActividad(${oIdx}, ${mIdx})" 
+                                class="w-4 h-4 rounded border-white/10 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer">
+                            <span class="text-xs ${m.cumplido ? 'line-through text-slate-500' : 'text-slate-200'} font-medium">${m.nombre}</span>
+                        </div>
+                        <button onclick="eliminarMicroActividad(${oIdx}, ${mIdx})" class="text-slate-600 hover:text-red-400 p-1 no-print">
+                            <i class="fa-solid fa-xs fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                contenedor.innerHTML += `
+                    <div class="glass p-5 rounded-3xl border-l-4 ${esLogroFinal ? 'border-emerald-500' : 'border-blue-500'} space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div>
+                            <span class="text-[9px] bg-blue-500/10 text-blue-400 border border-blue-500/20 font-black uppercase px-2 py-0.5 rounded tracking-wide">${obra.tipo}</span>
+                            <h4 class="text-base font-black text-white mt-1.5 leading-tight">${obra.titulo}</h4>
+                          </div>
+                          <div class="text-right flex sm:flex-col items-center sm:items-end justify-between gap-1">
+                             <span class="text-[10px] text-slate-500 uppercase font-bold">Logro:</span>
+                             <span class="font-mono text-sm font-black ${esLogroFinal ? 'text-emerald-400' : 'text-blue-400'}">${pctObra}%</span>
+                          </div>
+                        </div>
+
+                        <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
+                            <div class="h-full transition-all duration-500 ${esLogroFinal ? 'bg-emerald-500' : 'bg-blue-500'}" style="width: ${pctObra}%"></div>
+                        </div>
+
+                        <div class="space-y-2 pt-2 border-t border-white/5">
+                            ${htmlMicros}
+                        </div>
+
+                        <div class="flex gap-2 pt-1 no-print">
+                            <input type="text" placeholder="Añadir paso operativo quirúrgico..." id="input-new-micro-${obra.id}"
+                                class="flex-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs outline-none focus:border-blue-500 text-white">
+                            <button onclick="agregarMicroActividad(${oIdx}, ${obra.id})" class="bg-slate-800 hover:bg-slate-700 text-white px-4 rounded-xl text-xs font-bold">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function crearNuevaObra(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('obra-titulo').value;
+            const tipo = document.getElementById('obra-tipo').value;
+
+            proyectosObras.unshift({ id: Date.now(), titulo: titulo, tipo: tipo, micros: [] });
+            document.getElementById('obra-titulo').value = "";
+            renderizarObras();
+        }
+
+        function agregarMicroActividad(oIdx, obraId) {
+            const input = document.getElementById(`input-new-micro-${obraId}`);
+            const nombre = input.value.trim();
+            if(!nombre) return;
+
+            proyectosObras[oIdx].micros.push({ id: Date.now(), nombre: nombre, cumplido: false });
+            input.value = "";
+            renderizarObras();
+        }
+
+        function alternarMicroActividad(oIdx, mIdx) {
+            proyectosObras[oIdx].micros[mIdx].cumplido = !proyectosObras[oIdx].micros[mIdx].cumplido;
+            renderizarObras();
+        }
+
+        function eliminarMicroActividad(oIdx, mIdx) {
+            proyectosObras[oIdx].micros.splice(mIdx, 1);
+            renderizarObras();
+        }
+
+        window.onload = () => {
+            calcularYRenderizarPostes();
+            renderizarObras();
+        };
+    </script>
+</body>
+</html>
