@@ -35,7 +35,7 @@
                     <i class="fa-solid fa-lock text-white text-lg"></i>
                 </div>
                 <h2 class="text-lg font-black uppercase tracking-tight">Alcaldía de Guacara</h2>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Dirección Ejecutiva - Acceso</p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Dirección Executive - Acceso</p>
             </div>
             <form onsubmit="ejecutarLogin(event)" class="space-y-4 text-left">
                 <div>
@@ -80,8 +80,7 @@
         </form>
         <div class="space-y-2 pt-3 border-t border-white/5">
             <span class="text-[9px] uppercase font-black text-slate-500 block">Personal Activo en Calle</span>
-            <div id="lista-usuarios-cuadrilla" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                </div>
+            <div id="lista-usuarios-cuadrilla" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
         </div>
     </div>
 
@@ -123,7 +122,6 @@
     <main class="max-w-7xl mx-auto px-4 mt-6">
 
         <div id="portal-postes" class="space-y-3 sm:space-y-4">
-            
             <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
                 <div class="glass p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border-l-4 border-blue-500">
                     <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-400 block tracking-wider">Postes Alumbrado</span>
@@ -242,8 +240,28 @@
         </div>
 
         <div id="portal-actividades" class="hidden space-y-6">
+            
+            <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-blue-400 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-bar text-slate-300"></i> Resumen de Gestión de Obras Civiles y Ambientales
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center text-xs border-collapse">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-white/5 uppercase text-[9px] font-black tracking-wider">
+                                <th class="p-2 text-left">Eje del Proyecto</th>
+                                <th class="p-2">Asignados</th>
+                                <th class="p-2 text-blue-400">Iniciando</th>
+                                <th class="p-2 text-amber-400">En Desarrollo</th>
+                                <th class="p-2 text-emerald-400">Concluido</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-resumen-estadistico" class="divide-y divide-white/5 font-mono font-bold text-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
                 <div class="glass p-5 rounded-2xl h-fit no-print">
                     <h3 class="text-xs font-black uppercase tracking-wider text-blue-400 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-circle-plus"></i> Registrar Proyecto Operativo
@@ -272,9 +290,7 @@
                         <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Seguimiento Dinámico de Micro-Actividades</h3>
                         <span class="text-[10px] bg-slate-800 text-slate-300 px-3 py-1 rounded-full font-mono border border-white/5 font-bold uppercase" id="titulo-cuadrilla-contexto">Balance de Logros</span>
                     </div>
-                    
-                    <div id="contenedor-obras" class="space-y-4">
-                        </div>
+                    <div id="contenedor-obras" class="space-y-4"></div>
                 </div>
             </section>
         </div>
@@ -288,10 +304,8 @@
     </div>
 
     <script>
-        // ================= SISTEMA DE CONTROL DE PERSISTENCIA Y USUARIOS =================
         let usuarioLogueado = null;
 
-        // Base de usuarios inicial (Se guarda de forma persistente)
         let baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')) || [
             { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" }
         ];
@@ -314,14 +328,12 @@
             }
         ];
 
-        // GUARDADO EN MEMORIA INTERNA ANDROID (localStorage)
         function guardarEcosistemaEnDisco() {
             localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
             localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
             localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
         }
 
-        // CONTROLADOR QUIRÚRGICO DE LOGIN
         function ejecutarLogin(e) {
             e.preventDefault();
             const uInput = document.getElementById('login-usuario').value.trim();
@@ -331,6 +343,8 @@
 
             if (usuarioEncontrado) {
                 usuarioLogueado = usuarioEncontrado;
+                // HITO 1.1: GUARDADO DE INTEGRIDAD DE SESIÓN EN DISCO
+                localStorage.setItem('hdc_sesion_activa', JSON.stringify(usuarioLogueado));
                 document.getElementById('pantalla-login').classList.add('hidden');
                 configurarInterfazPorRol();
             } else {
@@ -342,12 +356,12 @@
 
         function ejecutarLogout() {
             usuarioLogueado = null;
+            localStorage.removeItem('hdc_sesion_activa');
             document.getElementById('login-usuario').value = "";
             document.getElementById('login-pass').value = "";
             document.getElementById('pantalla-login').classList.remove('hidden');
         }
 
-        // APLICACIÓN CONTROLADA DE ROLES (OCULTA O MUESTRA SEGÚN JERARQUÍA)
         function configurarInterfazPorRol() {
             document.getElementById('header-perfil-lbl').innerText = `| ${usuarioLogueado.nombre}`;
             document.getElementById('header-user-badge').innerText = `PERFIL OPERATIVO: ${usuarioLogueado.rol.toUpperCase()}`;
@@ -358,7 +372,6 @@
                 document.getElementById('titulo-cuadrilla-contexto').innerText = "Balance de Logros Globales (Dirección)";
                 cambiarPortal('postes');
             } else {
-                // Perfil Trabajador: Bloquea Plan Postes por completo y entra directo a tareas
                 document.getElementById('btn-master-users').classList.add('hidden');
                 document.getElementById('nav-postes').classList.add('hidden');
                 document.getElementById('titulo-cuadrilla-contexto').innerText = "Mis Proyectos Asignados";
@@ -369,7 +382,6 @@
             renderizarListaUsuarios();
         }
 
-        // GESTIÓN DE USUARIOS DE CUADRILLA
         function crearUsuarioTrabajador(e) {
             e.preventDefault();
             const nombre = document.getElementById('new-user-nombre').value.trim();
@@ -422,7 +434,6 @@
             document.getElementById('nav-actividades').className = portal === 'actividades' ? 'active-tab px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 uppercase' : 'px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-2 uppercase';
         }
 
-        // ================= CÓMPUTO TÁCTICO DE POSTES =================
         function agregarNuevoTrayecto(e) {
             e.preventDefault();
             const categoria = document.getElementById('trayecto-categoria').value;
@@ -484,6 +495,11 @@
                 gPintados += tramo.pintados;
                 gPendientes += pendientes;
 
+                // HITO 2: INTERCEPCIÓN DE SEGURIDAD. SOLO EL MASTER BORRA TRAYECTOS.
+                const celdaAcciones = (usuarioLogueado && usuarioLogueado.rol === "Master") 
+                    ? `<button onclick="eliminarTrayecto(${tramo.id})" class="text-slate-600 hover:text-red-400 transition-all"><i class="fa-solid fa-trash-can"></i></button>`
+                    : `<span class="text-[9px] text-slate-500 uppercase tracking-widest font-black block"><i class="fa-solid fa-lock text-slate-600 mr-1"></i>Fijo</span>`;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/[0.02] border-b border-white/5 transition-all text-[11px] sm:text-xs">
                         <td class="p-2 sm:p-3 text-left font-black text-blue-400 uppercase">${tramo.categoria}</td>
@@ -502,7 +518,7 @@
                         <td class="p-2 sm:p-3 text-slate-300 font-mono font-bold">${tramo.pintados > 0 ? brochas : 0} Und</td>
                         <td class="p-2 sm:p-3 text-right font-mono font-black ${pct === 100 ? 'text-emerald-400' : 'text-blue-400'}">${pct}%</td>
                         <td class="p-2 sm:p-3 text-center no-print">
-                            <button onclick="eliminarTrayecto(${tramo.id})" class="text-slate-600 hover:text-red-400"><i class="fa-solid fa-trash-can"></i></button>
+                            ${celdaAcciones}
                         </td>
                     </tr>
                 `;
@@ -521,21 +537,58 @@
             document.getElementById('global-gal-total').innerText = (galNaranja + galAzul + galAluminio + galNegro) + " Gal";
         }
 
-        function actualizarPintadosTramo(index, valor) {
-            let val = parseInt(valor) || 0;
-            if(val > tramosPostes[index].total) val = tramosPostes[index].total;
-            tramosPostes[index].pintados = val;
-            guardarEcosistemaEnDisco();
-            calcularYRenderizarPostes();
+        // HITO 1.4: CÓMPUTO ANALÍTICO SENCILO DE MATRIZ DE PROYECTOS Y LOGROS
+        function calcularYRenderizarEstadisticasObras() {
+            const tbodyEst = document.getElementById('tabla-resumen-estadistico');
+            if(!tbodyEst) return;
+            
+            const categoriasEje = ["Embellecimiento", "Construcción", "Recuperación de Espacio"];
+            const matriz = {};
+            
+            categoriasEje.forEach(cat => {
+                matriz[cat] = { total: 0, iniciando: 0, desarrollo: 0, concluido: 0 };
+            });
+
+            proyectosObras.forEach(obra => {
+                const cat = obra.tipo;
+                if(!matriz[cat]) {
+                    matriz[cat] = { total: 0, iniciando: 0, desarrollo: 0, concluido: 0 };
+                }
+                matriz[cat].total++;
+
+                const totalMicros = obra.micros.length;
+                const completadas = obra.micros.filter(m => m.cumplido).length;
+
+                if (totalMicros === 0 || completadas === 0) {
+                    matriz[cat].iniciando++;
+                } else if (completadas === totalMicros) {
+                    matriz[cat].concluido++;
+                } else {
+                    matriz[cat].desarrollo++;
+                }
+            });
+
+            tbodyEst.innerHTML = Object.keys(matriz).map(eje => {
+                return `
+                    <tr class="hover:bg-white/[0.01] transition-all">
+                        <td class="p-2 text-left font-sans text-slate-300 font-bold uppercase text-[11px]">${eje}</td>
+                        <td class="p-2 text-white font-black">${matriz[eje].total}</td>
+                        <td class="p-2 text-blue-400">${matriz[eje].iniciando}</td>
+                        <td class="p-2 text-amber-400">${matriz[eje].desarrollo}</td>
+                        <td class="p-2 text-emerald-400">${matriz[eje].concluido}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        // ================= SEGUIMIENTO DE PROYECTOS Y LOGROS INTERACTIVOS =================
         function renderizarObras() {
             const contenedor = document.getElementById('contenedor-obras');
             if(!contenedor) return;
             contenedor.innerHTML = "";
 
-            // El Master ve todo el mapa municipal, los trabajadores sólo lo que les corresponde
+            // Renderizar la tabla analítica primero
+            calcularYRenderizarEstadisticasObras();
+
             let obrasFiltradas = proyectosObras;
             if (usuarioLogueado && usuarioLogueado.rol !== "Master") {
                 obrasFiltradas = proyectosObras.filter(o => o.creador === usuarioLogueado.uid);
@@ -545,6 +598,21 @@
                 let completadas = obra.micros.filter(m => m.cumplido).length;
                 let totalMicros = obra.micros.length;
                 let pctObra = totalMicros > 0 ? Math.round((completadas / totalMicros) * 100) : 0;
+                
+                // Definición contextual de estatus del proyecto
+                let estatusTexto = "Iniciando";
+                let estatusEstilo = "bg-blue-500/10 text-blue-400 border-blue-500/20";
+                
+                if (totalMicros > 0 && completadas > 0) {
+                    if (completadas === totalMicros) {
+                        estatusTexto = "Concluido";
+                        estatusEstilo = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                    } else {
+                        estatusTexto = "En Desarrollo";
+                        estatusEstilo = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+                    }
+                }
+                
                 let esLogroFinal = completadas === totalMicros && totalMicros > 0;
 
                 let htmlMicros = obra.micros.map((m, mIdx) => `
@@ -565,8 +633,9 @@
                     <div class="glass p-4 sm:p-5 rounded-2xl border-l-4 ${esLogroFinal ? 'border-emerald-500' : 'border-blue-500'} space-y-3.5">
                         <div class="flex items-center justify-between gap-2">
                           <div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-[8px] bg-blue-500/10 text-blue-400 border border-blue-500/20 font-black uppercase px-2 py-0.5 rounded">${obra.tipo}</span>
+                                <span class="text-[8px] border font-black uppercase px-2 py-0.5 rounded ${estatusEstilo}">${estatusTexto}</span>
                                 <span class="text-[8px] bg-white/5 text-slate-400 px-2 py-0.5 rounded font-mono">ID: ${obra.creador}</span>
                             </div>
                             <h4 class="text-sm sm:text-base font-black text-white mt-1.5 leading-tight">${obra.titulo}</h4>
@@ -645,6 +714,40 @@
             guardarEcosistemaEnDisco();
             renderizarObras();
         }
+
+        // ================= INTERCEPTOR AL CARGAR LA PÁGINA (PERSISTENCIA Y GESTOS) =================
+        window.onload = () => {
+            // HITO 1.1: COMPROBACIÓN OPERATIVA DE SESIÓN ACTIVA EN DISCO
+            const sesionActiva = localStorage.getItem('hdc_sesion_activa');
+            if (sesionActiva) {
+                usuarioLogueado = JSON.parse(sesionActiva);
+                document.getElementById('pantalla-login').classList.add('hidden');
+                configurarInterfazPorRol();
+            } else {
+                calcularYRenderizarPostes();
+                renderizarObras();
+                renderizarListaUsuarios();
+            }
+
+            // HITO 1.2: INTERCEPTOR DE DESLIZAMIENTO DE PANTALLA (PULL-TO-REFRESH NATIVO ANDROID)
+            let touchStartVerticalY = 0;
+            window.addEventListener('touchstart', (e) => {
+                if (window.scrollY === 0) {
+                    touchStartVerticalY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                const currentY = e.touches[0].clientY;
+                const deltaY = currentY - touchStartVerticalY;
+                
+                // Si el usuario desliza hacia abajo más de 160px estando en el tope de la pantalla
+                if (window.scrollY === 0 && deltaY > 160) {
+                    touchStartVerticalY = currentY; // Reinicia el tracker
+                    location.reload(); // Refresca limpiamente la aplicación
+                }
+            }, { passive: true });
+        };
     </script>
 </body>
 </html>
