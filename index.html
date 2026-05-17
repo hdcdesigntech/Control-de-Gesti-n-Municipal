@@ -28,14 +28,14 @@
 </head>
 <body class="min-h-screen pb-12">
 
-    <div id="pantalla-login" class="fixed inset-0 z-[100] bg-[#060913] flex items-center justify-center p-4">
+    <div id="pantalla-login" class="fixed inset-0 z-[100] bg-[#060913] flex flex-col items-center justify-center p-4">
         <div class="glass w-full max-w-sm p-6 rounded-2xl border border-white/10 space-y-6 text-center">
             <div class="space-y-2">
                 <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg mx-auto">
                     <i class="fa-solid fa-lock text-white text-lg"></i>
                 </div>
                 <h2 class="text-lg font-black uppercase tracking-tight">Alcaldía de Guacara</h2>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Dirección Executive - Acceso</p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Dirección Ejecutiva - Acceso</p>
             </div>
             <form onsubmit="ejecutarLogin(event)" class="space-y-4 text-left">
                 <div>
@@ -52,6 +52,12 @@
                 </button>
             </form>
         </div>
+        
+        <footer class="mt-5 text-center text-[10px] tracking-[0.2em] uppercase font-bold no-print">
+            <span class="bg-gradient-to-r from-[#D4AF37] via-[#FFF3B0] to-[#C0C0C0] bg-clip-text text-transparent">
+                Copyright©2026 HDC Design & Tech
+            </span>
+        </footer>
     </div>
 
     <div id="drawer-usuarios" class="fixed inset-y-0 right-0 w-full max-w-xs bg-[#090d1a] border-l border-white/10 z-50 p-6 shadow-2xl space-y-6 hidden no-print">
@@ -297,6 +303,12 @@
 
     </main>
 
+    <footer class="mt-8 py-6 text-center text-[10px] tracking-[0.2em] uppercase font-bold border-t border-white/5 no-print">
+        <span class="bg-gradient-to-r from-[#D4AF37] via-[#FFF3B0] to-[#C0C0C0] bg-clip-text text-transparent">
+            Copyright©2026 HDC Design & Tech
+        </span>
+    </footer>
+
     <div class="hidden print-only fixed bottom-10 left-0 w-full grid grid-cols-3 text-center text-[10px] uppercase font-black px-12">
         <div class="border-t border-black pt-2 mx-6">Coordinador de Campo</div>
         <div class="border-t border-black pt-2 mx-6">Dirección Ejecutiva</div>
@@ -343,7 +355,6 @@
 
             if (usuarioEncontrado) {
                 usuarioLogueado = usuarioEncontrado;
-                // HITO 1.1: GUARDADO DE INTEGRIDAD DE SESIÓN EN DISCO
                 localStorage.setItem('hdc_sesion_activa', JSON.stringify(usuarioLogueado));
                 document.getElementById('pantalla-login').classList.add('hidden');
                 configurarInterfazPorRol();
@@ -495,7 +506,7 @@
                 gPintados += tramo.pintados;
                 gPendientes += pendientes;
 
-                // HITO 2: INTERCEPCIÓN DE SEGURIDAD. SOLO EL MASTER BORRA TRAYECTOS.
+                // ESCUDO DE PROTECCIÓN DE TRAYECTOS PARA EL TRABAJADOR
                 const celdaAcciones = (usuarioLogueado && usuarioLogueado.rol === "Master") 
                     ? `<button onclick="eliminarTrayecto(${tramo.id})" class="text-slate-600 hover:text-red-400 transition-all"><i class="fa-solid fa-trash-can"></i></button>`
                     : `<span class="text-[9px] text-slate-500 uppercase tracking-widest font-black block"><i class="fa-solid fa-lock text-slate-600 mr-1"></i>Fijo</span>`;
@@ -537,7 +548,7 @@
             document.getElementById('global-gal-total').innerText = (galNaranja + galAzul + galAluminio + galNegro) + " Gal";
         }
 
-        // HITO 1.4: CÓMPUTO ANALÍTICO SENCILO DE MATRIZ DE PROYECTOS Y LOGROS
+        // TABLA ESTADÍSTICA DE OBRAS
         function calcularYRenderizarEstadisticasObras() {
             const tbodyEst = document.getElementById('tabla-resumen-estadistico');
             if(!tbodyEst) return;
@@ -586,7 +597,7 @@
             if(!contenedor) return;
             contenedor.innerHTML = "";
 
-            // Renderizar la tabla analítica primero
+            // Renderizar resumen analítico
             calcularYRenderizarEstadisticasObras();
 
             let obrasFiltradas = proyectosObras;
@@ -599,7 +610,7 @@
                 let totalMicros = obra.micros.length;
                 let pctObra = totalMicros > 0 ? Math.round((completadas / totalMicros) * 100) : 0;
                 
-                // Definición contextual de estatus del proyecto
+                // Estados contextuales precisos
                 let estatusTexto = "Iniciando";
                 let estatusEstilo = "bg-blue-500/10 text-blue-400 border-blue-500/20";
                 
@@ -715,9 +726,8 @@
             renderizarObras();
         }
 
-        // ================= INTERCEPTOR AL CARGAR LA PÁGINA (PERSISTENCIA Y GESTOS) =================
+        // INTERCEPTOR AL CARGAR (PERSISTENCIA Y GESTOS ANDROID)
         window.onload = () => {
-            // HITO 1.1: COMPROBACIÓN OPERATIVA DE SESIÓN ACTIVA EN DISCO
             const sesionActiva = localStorage.getItem('hdc_sesion_activa');
             if (sesionActiva) {
                 usuarioLogueado = JSON.parse(sesionActiva);
@@ -729,7 +739,7 @@
                 renderizarListaUsuarios();
             }
 
-            // HITO 1.2: INTERCEPTOR DE DESLIZAMIENTO DE PANTALLA (PULL-TO-REFRESH NATIVO ANDROID)
+            // GESTO NATIVO PULL-TO-REFRESH ANDROID
             let touchStartVerticalY = 0;
             window.addEventListener('touchstart', (e) => {
                 if (window.scrollY === 0) {
@@ -741,10 +751,9 @@
                 const currentY = e.touches[0].clientY;
                 const deltaY = currentY - touchStartVerticalY;
                 
-                // Si el usuario desliza hacia abajo más de 160px estando en el tope de la pantalla
                 if (window.scrollY === 0 && deltaY > 160) {
-                    touchStartVerticalY = currentY; // Reinicia el tracker
-                    location.reload(); // Refresca limpiamente la aplicación
+                    touchStartVerticalY = currentY; 
+                    location.reload(); 
                 }
             }, { passive: true });
         };
