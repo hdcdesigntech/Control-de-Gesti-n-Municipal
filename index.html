@@ -318,17 +318,15 @@
     </div>
 
     <script>
-        // ================= PASO 2: PARÁMETROS MAESTROS DE INYECCIÓN DE SUPABASE =================
+        // ================= CONEXIÓN CON SUPABASE CLOUD =================
         const SUPABASE_URL = "https://cckzplmeoowvxwmiztig.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
         
-        // Inicialización condicionada para mitigar errores fatales de carga
-        const usarSupabaseCloud = (SUPABASE_URL && !SUPABASE_URL.includes("PEGA_AQUÍ"));
-        const supabase = (usarSupabaseCloud && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         let usuarioLogueado = null;
 
-        // Estructuras de datos locales de respaldo seguro
+        // Estructuras locales (Caché Offline de respaldo)
         let baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')) || [
             { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" }
         ];
@@ -351,50 +349,50 @@
             }
         ];
 
-        // PASO 3: SINCRONIZACIÓN HÍBRIDA ASÍNCRONA (LOCALSTORAGE + SUPABASE UPSERT)
+        // GUARDADO HÍBRIDO (LOCAL DE VELOCIDAD + RESPALDO ASÍNCRONO EN LA NUBE)
         async function guardarEcosistemaEnDisco() {
-            // Persistencia inmediata local para asegurar continuidad ante caídas de red
+            // 1. Escritura inmediata en memoria local (Tolerancia Offline)
             localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
             localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
             localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
 
-            // Sincronización en segundo plano hacia la nube de Supabase
+            // 2. Transmisión asíncrona hacia Supabase (UPSERT)
             if (supabase) {
                 try {
                     await supabase.from('usuarios').upsert(baseUsuarios);
                     await supabase.from('tramos_postes').upsert(tramosPostes);
                     await supabase.from('proyectos_obras').upsert(proyectosObras);
                 } catch (error) {
-                    console.log("Modo Desconectado Activo. Los cambios se sincronizarán al recuperar señal:", error);
+                    console.log("Señal de red inestable. Los datos permanecen guardados localmente en el teléfono.");
                 }
             }
         }
 
-        // PASO 4: PIPELINE DE DESCARGA TRANSPARENTE E INDEPENDIENTE DESDE LA NUBE
+        // DESCARGA Y SINCRONIZACIÓN DE DATOS DESDE LA NUBE EN TIEMPO REAL
         async function descargarDatosDesdeNube() {
             if (supabase) {
                 try {
-                    let { data: users, error: err1 } = await supabase.from('usuarios').select('*');
+                    let { data: users } = await supabase.from('usuarios').select('*');
                     if (users && users.length > 0) baseUsuarios = users;
-                } catch (e) { console.log("Reteniendo caché local de usuarios."); }
+                } catch (e) { console.log("Usando caché local de usuarios."); }
 
                 try {
-                    let { data: tramos, error: err2 } = await supabase.from('tramos_postes').select('*');
+                    let { data: tramos } = await supabase.from('tramos_postes').select('*');
                     if (tramos && tramos.length > 0) tramosPostes = tramos;
-                } catch (e) { console.log("Reteniendo caché local de tramos."); }
+                } catch (e) { console.log("Usando caché local de tramos."); }
 
                 try {
-                    let { data: obras, error: err3 } = await supabase.from('proyectos_obras').select('*');
+                    let { data: obras } = await supabase.from('proyectos_obras').select('*');
                     if (obras && obras.length > 0) proyectosObras = obras;
-                } catch (error) { console.log("Reteniendo caché local de proyectos."); }
+                } catch (error) { console.log("Usando caché local de proyectos."); }
             }
             ejecutarDibujadoProtegido();
         }
 
         function ejecutarDibujadoProtegido() {
-            try { calcularYRenderizarPostes(); } catch(err) { console.log("Error postes visual engine:", err); }
-            try { renderizarObras(); } catch(err) { console.log("Error obras visual engine:", err); }
-            try { renderizarListaUsuarios(); } catch(err) { console.log("Error usuarios visual engine:", err); }
+            try { calcularYRenderizarPostes(); } catch(err) { console.log("Error postes render:", err); }
+            try { renderizarObras(); } catch(err) { console.log("Error obras render:", err); }
+            try { renderizarListaUsuarios(); } catch(err) { console.log("Error usuarios render:", err); }
         }
 
         function ejecutarLogin(e) {
@@ -477,7 +475,6 @@
             `).join('');
         }
 
-        // PASO 5: ACCIONES DE ELIMINACIÓN REMOTA FÍSICA DIRECTA A SQL (SUPABASE .DELETE())
         async function eliminarUsuario(uid) {
             baseUsuarios = baseUsuarios.filter(u => u.uid !== uid);
             if (supabase) {
@@ -792,7 +789,7 @@
         }
 
         window.onload = () => {
-            // Inicialización instantánea con caché local
+            // Inicialización instantánea con caché de memoria local
             const sesionActiva = localStorage.getItem('hdc_sesion_activa');
             if (sesionActiva) {
                 usuarioLogueado = JSON.parse(sesionActiva);
@@ -802,10 +799,10 @@
                 ejecutarDibujadoProtegido();
             }
 
-            // Descarga de actualización remota (Multiusuario en tiempo real)
+            // Descarga remota asíncrona (Sincronización multiusuario)
             descargarDatosDesdeNube();
 
-            // Gesto Pull-To-Refresh optimizado para Android
+            // Gesto Pull-To-Refresh Android
             let touchStartVerticalY = 0;
             window.addEventListener('touchstart', (e) => {
                 if (window.scrollY === 0) {
