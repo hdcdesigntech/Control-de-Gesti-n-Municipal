@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,7 +17,6 @@
         .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); color: white; }
         .active-tab { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
         
-        /* Estilos de Impresión Limpios */
         @media print {
             .no-print { display: none !important; }
             body { background: white; color: black; }
@@ -248,7 +248,6 @@
         </div>
 
         <div id="portal-actividades" class="hidden space-y-6">
-            
             <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 space-y-3">
                 <h3 class="text-xs font-black uppercase tracking-wider text-blue-400 flex items-center gap-2">
                     <i class="fa-solid fa-chart-bar text-slate-300"></i> Resumen de Gestión de Obras Civiles y Ambientales
@@ -318,7 +317,7 @@
     </div>
 
     <script>
-        // ================= CONEXIÓN CON SUPABASE CLOUD =================
+        // Parámetros Maestros de Supabase Cloud
         const SUPABASE_URL = "https://cckzplmeoowvxwmiztig.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
         
@@ -326,7 +325,7 @@
 
         let usuarioLogueado = null;
 
-        // Estructuras locales (Caché Offline de respaldo)
+        // Base local por defecto de alta fiabilidad
         let baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')) || [
             { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" }
         ];
@@ -343,56 +342,61 @@
                 tipo: "Recuperación de Espacio",
                 creador: "master",
                 micros: [
-                    { id: 501, nombre: "Saneamiento de brocales y cercado", cumplido: true },
-                    { id: 502, nombre: "Aplicación de pintura de alto tráfico en losas", cumplido: false }
+                    { id: 501, name: "Saneamiento de brocales y cercado", cumplido: true },
+                    { id: 502, name: "Aplicación de pintura de alto tráfico en losas", cumplido: false }
                 ]
             }
         ];
 
-        // GUARDADO HÍBRIDO (LOCAL DE VELOCIDAD + RESPALDO ASÍNCRONO EN LA NUBE)
         async function guardarEcosistemaEnDisco() {
-            // 1. Escritura inmediata en memoria local (Tolerancia Offline)
             localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
             localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
             localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
 
-            // 2. Transmisión asíncrona hacia Supabase (UPSERT)
             if (supabase) {
                 try {
                     await supabase.from('usuarios').upsert(baseUsuarios);
                     await supabase.from('tramos_postes').upsert(tramosPostes);
                     await supabase.from('proyectos_obras').upsert(proyectosObras);
                 } catch (error) {
-                    console.log("Señal de red inestable. Los datos permanecen guardados localmente en el teléfono.");
+                    console.error("Supabase Sync Error (Retenido en Local):", error);
                 }
             }
         }
 
-        // DESCARGA Y SINCRONIZACIÓN DE DATOS DESDE LA NUBE EN TIEMPO REAL
         async function descargarDatosDesdeNube() {
             if (supabase) {
                 try {
-                    let { data: users } = await supabase.from('usuarios').select('*');
-                    if (users && users.length > 0) baseUsuarios = users;
-                } catch (e) { console.log("Usando caché local de usuarios."); }
+                    let { data: users, error } = await supabase.from('usuarios').select('*');
+                    if (error) console.error("Error Supabase leyendo usuarios:", error);
+                    
+                    if (users && users.length > 0) {
+                        baseUsuarios = users;
+                    }
+                } catch (e) { console.error("Fallo de red. Usando usuarios locales."); }
+
+                // INYECCIÓN DE CONTROL AUTOMÁTICO DE RESGUARDO (PREVIENE LOCKOUTS)
+                if (!baseUsuarios.some(u => u.uid === "master")) {
+                    baseUsuarios.push({ uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" });
+                }
 
                 try {
                     let { data: tramos } = await supabase.from('tramos_postes').select('*');
                     if (tramos && tramos.length > 0) tramosPostes = tramos;
-                } catch (e) { console.log("Usando caché local de tramos."); }
+                } catch (e) {}
 
                 try {
                     let { data: obras } = await supabase.from('proyectos_obras').select('*');
                     if (obras && obras.length > 0) proyectosObras = obras;
-                } catch (error) { console.log("Usando caché local de proyectos."); }
+                } catch (error) {}
             }
             ejecutarDibujadoProtegido();
         }
 
         function ejecutarDibujadoProtegido() {
-            try { calcularYRenderizarPostes(); } catch(err) { console.log("Error postes render:", err); }
-            try { renderizarObras(); } catch(err) { console.log("Error obras render:", err); }
-            try { renderizarListaUsuarios(); } catch(err) { console.log("Error usuarios render:", err); }
+            try { calcularYRenderizarPostes(); } catch(err) {}
+            try { renderizarObras(); } catch(err) {}
+            try { renderizarListaUsuarios(); } catch(err) {}
         }
 
         function ejecutarLogin(e) {
@@ -789,20 +793,27 @@
         }
 
         window.onload = () => {
-            // Inicialización instantánea con caché de memoria local
             const sesionActiva = localStorage.getItem('hdc_sesion_activa');
             if (sesionActiva) {
-                usuarioLogueado = JSON.parse(sesionActiva);
-                document.getElementById('pantalla-login').classList.add('hidden');
-                configurarInterfazPorRol();
+                try {
+                    usuarioLogueado = JSON.parse(sesionActiva);
+                    if(usuarioLogueado && usuarioLogueado.uid) {
+                        document.getElementById('pantalla-login').classList.add('hidden');
+                        configurarInterfazPorRol();
+                    } else {
+                        localStorage.removeItem('hdc_sesion_activa');
+                        ejecutarDibujadoProtegido();
+                    }
+                } catch(e) {
+                    localStorage.removeItem('hdc_sesion_activa');
+                    ejecutarDibujadoProtegido();
+                }
             } else {
                 ejecutarDibujadoProtegido();
             }
 
-            // Descarga remota asíncrona (Sincronización multiusuario)
             descargarDatosDesdeNube();
 
-            // Gesto Pull-To-Refresh Android
             let touchStartVerticalY = 0;
             window.addEventListener('touchstart', (e) => {
                 if (window.scrollY === 0) {
