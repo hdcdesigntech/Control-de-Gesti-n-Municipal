@@ -45,7 +45,12 @@
                 </div>
                 <div>
                     <label class="text-[10px] uppercase font-black text-slate-400 mb-1 block">Contraseña</label>
-                    <input type="password" id="login-pass" placeholder="••••••••" class="w-full p-2.5 rounded-xl glass-input text-xs outline-none focus:border-blue-500" required>
+                    <div class="relative">
+                        <input type="password" id="login-pass" placeholder="••••••••" class="w-full p-2.5 pr-10 rounded-xl glass-input text-xs outline-none focus:border-blue-500" required>
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-all outline-none">
+                            <i id="icono-ojo" class="fa-solid fa-eye-slash text-xs"></i>
+                        </button>
+                    </div>
                 </div>
                 <div id="login-error" class="text-red-400 text-[10px] font-bold uppercase hidden text-center">Credenciales Incorrectas</div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
@@ -98,7 +103,7 @@
                     <i class="fa-solid fa-sliders text-white text-base"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-bold tracking-tight uppercase">Alcaldía de Guacara <span class="text-blue-400" id="header-perfil-lbl">| Dirección Executive</span></h1>
+                    <h1 class="text-base font-bold tracking-tight uppercase">Alcaldía de Guacara <span class="text-blue-400" id="header-perfil-lbl">| Dirección Ejecutiva</span></h1>
                     <p class="text-[9px] text-slate-400 font-black tracking-[0.15em]" id="header-user-badge">Cargando...</p>
                 </div>
             </div>
@@ -320,7 +325,6 @@
         const SUPABASE_URL = "https://cckzplmeoowvxwmiztig.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
         
-        // CORRECCIÓN SINTÁCTICA QUIRÚRGICA: Renombramos la variable a 'supabaseClient' para evitar colisión con el CDN
         const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         let usuarioLogueado = null;
@@ -347,6 +351,20 @@
                 ]
             }
         ];
+
+        // FUNCIÓN QUIRÚRGICA: CONMUTADOR DE OJITO (MUESTRA / OCULTA CONTRASEÑA)
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('login-pass');
+            const iconoOjo = document.getElementById('icono-ojo');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                iconoOjo.className = "fa-solid fa-eye text-xs"; // Ojo abierto
+            } else {
+                passInput.type = 'password';
+                iconoOjo.className = "fa-solid fa-eye-slash text-xs"; // Ojo tachado
+            }
+        }
 
         async function guardarEcosistemaEnDisco() {
             localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
@@ -375,7 +393,6 @@
                     }
                 } catch (e) { console.error("Fallo de red. Usando usuarios locales."); }
 
-                // INYECCIÓN DE CONTROL AUTOMÁTICO DE RESGUARDO (PREVIENE LOCKOUTS)
                 if (!baseUsuarios.some(u => u.uid === "master")) {
                     baseUsuarios.push({ uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" });
                 }
@@ -423,6 +440,13 @@
             localStorage.removeItem('hdc_sesion_activa');
             document.getElementById('login-usuario').value = "";
             document.getElementById('login-pass').value = "";
+            
+            // Forzar reseteo visual del ojo al salir por seguridad
+            const passInput = document.getElementById('login-pass');
+            const iconoOjo = document.getElementById('icono-ojo');
+            passInput.type = 'password';
+            iconoOjo.className = "fa-solid fa-eye-slash text-xs";
+
             document.getElementById('pantalla-login').classList.remove('hidden');
         }
 
@@ -582,7 +606,7 @@
                         </td>
                         <td class="p-2 sm:p-3 font-mono font-bold text-amber-500">${pendientes}</td>
                         <td class="p-2 sm:p-3 text-slate-300 font-mono">${basePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblBase}</span></td>
-                        <td class="p-2 sm:p-3 text-slate-300 font-mono">${contrastePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblContraste}</span></td>
+                        <td class="p-2 sm:p-3 text-slate-300 font-mono">${contrastPintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblContraste}</span></td>
                         <td class="p-2 sm:p-3 text-slate-300 font-mono font-bold">${tramo.pintados > 0 ? brochas : 0} Und</td>
                         <td class="p-2 sm:p-3 text-right font-mono font-black ${pct === 100 ? 'text-emerald-400' : 'text-blue-400'}">${pct}%</td>
                         <td class="p-2 sm:p-3 text-center no-print">
