@@ -306,7 +306,7 @@
 
         let usuarioLogueado = null;
 
-        // PROTECCIÓN DE PERSISTENCIA CONTRA ARREGLOS VACÍOS
+        // PROTECCIÓN DE ARREGLOS DE RESPALDO LOCAL
         let baseUsuarios = [];
         try { baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')); } catch(e) {}
         if (!baseUsuarios || !Array.isArray(baseUsuarios) || baseUsuarios.length === 0) {
@@ -344,7 +344,7 @@
                 localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
                 localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
                 localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
-            } catch(e) { console.log("Memory lock."); }
+            } catch(e) { console.log("Memory disk block."); }
 
             if (supabase) {
                 try {
@@ -357,7 +357,6 @@
             }
         }
 
-        // AISLAMIENTO DE ERRORES DE SUPABASE: Evita que tablas inexistentes detengan la aplicación
         async function descargarDatosDesdeNube() {
             if (supabase) {
                 try {
@@ -375,24 +374,22 @@
                     if (obras && obras.length > 0) proyectosObras = obras;
                 } catch (error) { console.log("Tabla proyectos remota no sincronizada aún."); }
             }
-            
-            // Garantizamos que la interfaz local renderice SIEMPRE
-            try {
-                calcularYRenderizarPostes();
-                renderizarObras();
-                renderizarListaUsuarios();
-            } catch(err) {
-                console.log("Error de dibujo:", err);
-            }
+            ejecutarDibujadoProtegido();
         }
 
-        // CONTROLADOR DE ACCESO CON BYPASS FÍSICO CORREGIDO
+        // ENVOLTORIO PROTEGIDO CONTRA ERRORES CRÍTICOS DE DIBUJO
+        function ejecutarDibujadoProtegido() {
+            try { calcularYRenderizarPostes(); } catch(err) { console.error("Error renderizando postes:", err); }
+            try { renderizarObras(); } catch(err) { console.error("Error renderizando obras:", err); }
+            try { renderizarListaUsuarios(); } catch(err) { console.error("Error renderizando lista usuarios:", err); }
+        }
+
         function ejecutarLogin(e) {
             e.preventDefault();
             const uInput = document.getElementById('login-usuario').value.trim();
             const pInput = document.getElementById('login-pass').value.trim();
             
-            // BYPASS BLINDADO
+            // BYPASS BLINDADO INSTANTÁNEO
             if (uInput === "master" && pInput === "1234") {
                 usuarioLogueado = { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" };
                 if(!baseUsuarios.some(u => u.uid === "master")) {
@@ -439,9 +436,7 @@
                 document.getElementById('titulo-cuadrilla-contexto').innerText = "Mis Proyectos Asignados";
                 cambiarPortal('actividades');
             }
-            calcularYRenderizarPostes();
-            renderizarObras();
-            renderizarListaUsuarios();
+            ejecutarDibujadoProtegido();
         }
 
         function crearUsuarioTrabajador(e) {
@@ -460,7 +455,7 @@
             document.getElementById('new-user-nombre').value = "";
             document.getElementById('new-user-id').value = "";
             document.getElementById('new-user-pass').value = "";
-            renderizarListaUsuarios();
+            ejecutarDibujadoProtegido();
         }
 
         function renderizarListaUsuarios() {
@@ -483,7 +478,7 @@
                 await supabase.from('usuarios').delete().eq('uid', uid);
             }
             guardarEcosistemaEnDisco();
-            renderizarListaUsuarios();
+            ejecutarDibujadoProtegido();
         }
 
         function toggleDrawerUsuarios() {
@@ -512,7 +507,7 @@
             document.getElementById('trayecto-segmento').value = "";
             document.getElementById('trayecto-total').value = "10";
             document.getElementById('trayecto-pintados').value = "0";
-            calcularYRenderizarPostes();
+            ejecutarDibujadoProtegido();
         }
 
         async function eliminarTrayecto(id) {
@@ -521,10 +516,10 @@
                 await supabase.from('tramos_postes').delete().eq('id', id);
             }
             guardarEcosistemaEnDisco();
-            calcularYRenderizarPostes();
+            ejecutarDibujadoProtegido();
         }
 
-        // VARIABLE CORREGIDA PERFECTAMENTE SIN REFERENCE ERRORS
+        // CORRECCIÓN MÁSTER: VARIABLE SINTÁCTICAMENTE FIJADA SIN ERRORES DE IDENTIFICADOR
         function calcularYRenderizarPostes() {
             const tbody = document.getElementById('tabla-postes-body');
             if(!tbody) return;
@@ -602,7 +597,7 @@
             if(val > tramosPostes[index].total) val = tramosPostes[index].total;
             tramosPostes[index].pintados = val;
             guardarEcosistemaEnDisco();
-            calcularYRenderizarPostes();
+            ejecutarDibujadoProtegido();
         }
 
         function renderizarObras() {
@@ -688,7 +683,7 @@
             });
             guardarEcosistemaEnDisco();
             document.getElementById('obra-titulo').value = "";
-            renderizarObras();
+            ejecutarDibujadoProtegido();
         }
 
         async function eliminarProyecto(id, oIdx) {
@@ -697,7 +692,7 @@
                 await supabase.from('proyectos_obras').delete().eq('id', id);
             }
             guardarEcosistemaEnDisco();
-            renderizarObras();
+            ejecutarDibujadoProtegido();
         }
 
         function agregarMicroActividad(oIdx, obraId) {
@@ -708,19 +703,19 @@
             proyectosObras[oIdx].micros.push({ id: Date.now(), nombre: nombre, cumplido: false });
             guardarEcosistemaEnDisco();
             input.value = "";
-            renderizarObras();
+            ejecutarDibujadoProtegido();
         }
 
         function alternarMicroActividad(oIdx, mIdx) {
             proyectosObras[oIdx].micros[mIdx].cumplido = !proyectosObras[oIdx].micros[mIdx].cumplido;
             guardarEcosistemaEnDisco();
-            renderizarObras();
+            ejecutarDibujadoProtegido();
         }
 
         function eliminarMicroActividad(oIdx, mIdx) {
             proyectosObras[oIdx].micros.splice(mIdx, 1);
             guardarEcosistemaEnDisco();
-            renderizarObras();
+            ejecutarDibujadoProtegido();
         }
 
         window.onload = () => {
