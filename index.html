@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #060913; color: #f8fafc; }
         .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -297,110 +295,41 @@
     </div>
 
     <script>
-        // ================= PARÁMETROS MAESTROS DE INYECCIÓN DE SUPABASE =================
-        const SUPABASE_URL = "https://cckzplmeoowvxwmiztig.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
-        
-        const usarSupabaseCloud = (SUPABASE_URL && !SUPABASE_URL.includes("PEGA_AQUÍ"));
-        const supabase = (usarSupabaseCloud && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
+        // ================= SISTEMA DE CONTROL DE PERSISTENCIA Y USUARIOS =================
         let usuarioLogueado = null;
 
-        // PROTECCIÓN DE ARREGLOS DE RESPALDO LOCAL
-        let baseUsuarios = [];
-        try { baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')); } catch(e) {}
-        if (!baseUsuarios || !Array.isArray(baseUsuarios) || baseUsuarios.length === 0) {
-            baseUsuarios = [{ uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" }];
-        }
+        let baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')) || [
+            { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" }
+        ];
 
-        let tramosPostes = [];
-        try { tramosPostes = JSON.parse(localStorage.getItem('hdc_tramos')); } catch(e) {}
-        if (!tramosPostes || !Array.isArray(tramosPostes) || tramosPostes.length === 0) {
-            tramosPostes = [
-                { id: 1, categoria: "Autopista", segmento: "Entrada hasta Dist. Yagua", tipoPoste: "Poste Alumbrado", total: 12, pintados: 7 },
-                { id: 2, categoria: "Autopista", segmento: "Tramo Dist. Yagua - Variante", tipoPoste: "Poste Alumbrado", total: 25, pintados: 12 }
-            ];
-        }
+        let tramosPostes = JSON.parse(localStorage.getItem('hdc_tramos')) || [
+            { id: 1, categoria: "Autopista", segmento: "Entrada hasta Dist. Yagua", tipoPoste: "Poste Alumbrado", total: 12, pintados: 7 },
+            { id: 2, categoria: "Autopista", segmento: "Tramo Dist. Yagua - Variante", tipoPoste: "Poste Alumbrado", total: 25, pintados: 12 }
+        ];
 
-        let proyectosObras = [];
-        try { proyectosObras = JSON.parse(localStorage.getItem('hdc_obras')); } catch(e) {}
-        if (!proyectosObras || !Array.isArray(proyectosObras) || proyectosObras.length === 0) {
-            proyectosObras = [
-                {
-                    id: 1,
-                    titulo: "Recuperación e Iluminación de Cancha de Usos Múltiples",
-                    tipo: "Recuperación de Espacio",
-                    creador: "master",
-                    micros: [
-                        { id: 501, nombre: "Saneamiento de brocales y cercado", cumplido: true },
-                        { id: 502, nombre: "Aplicación de pintura de alto tráfico en losas", cumplido: false }
-                    ]
-                }
-            ];
-        }
-
-        async function guardarEcosistemaEnDisco() {
-            try {
-                localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
-                localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
-                localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
-            } catch(e) { console.log("Memory disk block."); }
-
-            if (supabase) {
-                try {
-                    await supabase.from('usuarios').upsert(baseUsuarios);
-                    await supabase.from('tramos_postes').upsert(tramosPostes);
-                    await supabase.from('proyectos_obras').upsert(proyectosObras);
-                } catch (error) {
-                    console.log("Modo Offline Activo:", error);
-                }
+        let proyectosObras = JSON.parse(localStorage.getItem('hdc_obras')) || [
+            {
+                id: 1,
+                titulo: "Recuperación e Iluminación de Cancha de Usos Múltiples",
+                tipo: "Recuperación de Espacio",
+                creador: "master",
+                micros: [
+                    { id: 501, nombre: "Saneamiento de brocales y cercado", cumplido: true },
+                    { id: 502, nombre: "Aplicación de pintura de alto tráfico en losas", cumplido: false }
+                ]
             }
-        }
+        ];
 
-        async function descargarDatosDesdeNube() {
-            if (supabase) {
-                try {
-                    let { data: users } = await supabase.from('usuarios').select('*');
-                    if (users && users.length > 0) baseUsuarios = users;
-                } catch (e) { console.log("Tabla usuarios remota no sincronizada aún."); }
-
-                try {
-                    let { data: tramos } = await supabase.from('tramos_postes').select('*');
-                    if (tramos && tramos.length > 0) tramosPostes = tramos;
-                } catch (e) { console.log("Tabla tramos remota no sincronizada aún."); }
-
-                try {
-                    let { data: obras } = await supabase.from('proyectos_obras').select('*');
-                    if (obras && obras.length > 0) proyectosObras = obras;
-                } catch (error) { console.log("Tabla proyectos remota no sincronizada aún."); }
-            }
-            ejecutarDibujadoProtegido();
-        }
-
-        // ENVOLTORIO PROTEGIDO CONTRA ERRORES CRÍTICOS DE DIBUJO
-        function ejecutarDibujadoProtegido() {
-            try { calcularYRenderizarPostes(); } catch(err) { console.error("Error renderizando postes:", err); }
-            try { renderizarObras(); } catch(err) { console.error("Error renderizando obras:", err); }
-            try { renderizarListaUsuarios(); } catch(err) { console.error("Error renderizando lista usuarios:", err); }
+        function guardarEcosistemaEnDisco() {
+            localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
+            localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
+            localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
         }
 
         function ejecutarLogin(e) {
             e.preventDefault();
             const uInput = document.getElementById('login-usuario').value.trim();
             const pInput = document.getElementById('login-pass').value.trim();
-            
-            // BYPASS BLINDADO INSTANTÁNEO
-            if (uInput === "master" && pInput === "1234") {
-                usuarioLogueado = { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" };
-                if(!baseUsuarios.some(u => u.uid === "master")) {
-                    baseUsuarios.push(usuarioLogueado);
-                    guardarEcosistemaEnDisco();
-                }
-                document.getElementById('pantalla-login').classList.add('hidden');
-                configurarInterfazPorRol();
-                return;
-            }
-
             const usuarioEncontrado = baseUsuarios.find(user => user.uid === uInput && user.pass === pInput);
 
             if (usuarioEncontrado) {
@@ -436,7 +365,9 @@
                 document.getElementById('titulo-cuadrilla-contexto').innerText = "Mis Proyectos Asignados";
                 cambiarPortal('actividades');
             }
-            ejecutarDibujadoProtegido();
+            calcularYRenderizarPostes();
+            renderizarObras();
+            renderizarListaUsuarios();
         }
 
         function crearUsuarioTrabajador(e) {
@@ -455,7 +386,7 @@
             document.getElementById('new-user-nombre').value = "";
             document.getElementById('new-user-id').value = "";
             document.getElementById('new-user-pass').value = "";
-            ejecutarDibujadoProtegido();
+            renderizarListaUsuarios();
         }
 
         function renderizarListaUsuarios() {
@@ -472,13 +403,10 @@
             `).join('');
         }
 
-        async function eliminarUsuario(uid) {
+        function eliminarUsuario(uid) {
             baseUsuarios = baseUsuarios.filter(u => u.uid !== uid);
-            if (supabase) {
-                await supabase.from('usuarios').delete().eq('uid', uid);
-            }
             guardarEcosistemaEnDisco();
-            ejecutarDibujadoProtegido();
+            renderizarListaUsuarios();
         }
 
         function toggleDrawerUsuarios() {
@@ -507,19 +435,15 @@
             document.getElementById('trayecto-segmento').value = "";
             document.getElementById('trayecto-total').value = "10";
             document.getElementById('trayecto-pintados').value = "0";
-            ejecutarDibujadoProtegido();
+            calcularYRenderizarPostes();
         }
 
-        async function eliminarTrayecto(id) {
+        function eliminarTrayecto(id) {
             tramosPostes = tramosPostes.filter(t => t.id !== id);
-            if (supabase) {
-                await supabase.from('tramos_postes').delete().eq('id', id);
-            }
             guardarEcosistemaEnDisco();
-            ejecutarDibujadoProtegido();
+            calcularYRenderizarPostes();
         }
 
-        // CORRECCIÓN MÁSTER: VARIABLE SINTÁCTICAMENTE FIJADA SIN ERRORES DE IDENTIFICADOR
         function calcularYRenderizarPostes() {
             const tbody = document.getElementById('tabla-postes-body');
             if(!tbody) return;
@@ -597,7 +521,7 @@
             if(val > tramosPostes[index].total) val = tramosPostes[index].total;
             tramosPostes[index].pintados = val;
             guardarEcosistemaEnDisco();
-            ejecutarDibujadoProtegido();
+            calcularYRenderizarPostes();
         }
 
         function renderizarObras() {
@@ -645,7 +569,7 @@
                                 <span class="text-[9px] text-slate-500 uppercase font-bold">Logro</span>
                                 <span class="font-mono text-xs sm:text-sm font-black ${esLogroFinal ? 'text-emerald-400' : 'text-blue-400'}">${pctObra}%</span>
                              </div>
-                             <button onclick="eliminarProyecto('${obra.id}', ${oIdx})" class="text-slate-600 hover:text-red-400 p-2 transition-all no-print"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                             <button onclick="eliminarProyecto(${oIdx})" class="text-slate-600 hover:text-red-400 p-2 transition-all no-print"><i class="fa-solid fa-trash-can text-xs"></i></button>
                           </div>
                         </div>
 
@@ -683,16 +607,13 @@
             });
             guardarEcosistemaEnDisco();
             document.getElementById('obra-titulo').value = "";
-            ejecutarDibujadoProtegido();
+            renderizarObras();
         }
 
-        async function eliminarProyecto(id, oIdx) {
+        function eliminarProyecto(oIdx) {
             proyectosObras.splice(oIdx, 1);
-            if (supabase) {
-                await supabase.from('proyectos_obras').delete().eq('id', id);
-            }
             guardarEcosistemaEnDisco();
-            ejecutarDibujadoProtegido();
+            renderizarObras();
         }
 
         function agregarMicroActividad(oIdx, obraId) {
@@ -703,24 +624,20 @@
             proyectosObras[oIdx].micros.push({ id: Date.now(), nombre: nombre, cumplido: false });
             guardarEcosistemaEnDisco();
             input.value = "";
-            ejecutarDibujadoProtegido();
+            renderizarObras();
         }
 
         function alternarMicroActividad(oIdx, mIdx) {
             proyectosObras[oIdx].micros[mIdx].cumplido = !proyectosObras[oIdx].micros[mIdx].cumplido;
             guardarEcosistemaEnDisco();
-            ejecutarDibujadoProtegido();
+            renderizarObras();
         }
 
         function eliminarMicroActividad(oIdx, mIdx) {
             proyectosObras[oIdx].micros.splice(mIdx, 1);
             guardarEcosistemaEnDisco();
-            ejecutarDibujadoProtegido();
+            renderizarObras();
         }
-
-        window.onload = () => {
-            descargarDatosDesdeNube();
-        };
     </script>
 </body>
 </html>
