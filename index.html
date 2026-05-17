@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #060913; color: #f8fafc; }
         .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -295,7 +297,14 @@
     </div>
 
     <script>
-        // ================= SISTEMA DE CONTROL DE PERSISTENCIA Y USUARIOS =================
+        // ================= PARÁMETROS MAESTROS DE INYECCIÓN DE SUPABASE =================
+        const SUPABASE_URL = "https://cckzplmeoowvxwmiztig.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
+        
+        // El motor evalúa si ya agregaste tus credenciales reales, si no, trabaja en local de forma fluida
+        const usarSupabaseCloud = (SUPABASE_URL && !SUPABASE_URL.includes("PEGA_AQUÍ"));
+        const supabase = usarSupabaseCloud ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
         let usuarioLogueado = null;
 
         let baseUsuarios = JSON.parse(localStorage.getItem('hdc_usuarios')) || [
@@ -320,10 +329,42 @@
             }
         ];
 
-        function guardarEcosistemaEnDisco() {
+        // SINCRONIZACIÓN INTELIGENTE (GUARDA EN LOCAL Y DISPARA A LA NUBE EN SEGUNDO PLANO)
+        async function guardarEcosistemaEnDisco() {
             localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
             localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
             localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
+
+            if (supabase) {
+                try {
+                    await supabase.from('usuarios').upsert(baseUsuarios);
+                    await supabase.from('tramos_postes').upsert(tramosPostes);
+                    await supabase.from('proyectos_obras').upsert(proyectosObras);
+                } catch (error) {
+                    console.log("Modo Offline Activo. Datos guardados localmente en Android:", error);
+                }
+            }
+        }
+
+        // DESCARGA EN TIEMPO REAL DESDE LA NUBE AL INICIAR LA APP
+        async function descargarDatosDesdeNube() {
+            if (supabase) {
+                try {
+                    let { data: users } = await supabase.from('usuarios').select('*');
+                    if (users && users.length > 0) baseUsuarios = users;
+
+                    let { data: tramos } = await supabase.from('tramos_postes').select('*');
+                    if (tramos && tramos.length > 0) tramosPostes = tramos;
+
+                    let { data: obras } = await supabase.from('proyectos_obras').select('*');
+                    if (obras && obras.length > 0) proyectosObras = obras;
+                } catch (error) {
+                    console.log("Cargando desde el almacenamiento interno del dispositivo.");
+                }
+            }
+            calcularYRenderizarPostes();
+            renderizarObras();
+            renderizarListaUsuarios();
         }
 
         function ejecutarLogin(e) {
@@ -403,8 +444,11 @@
             `).join('');
         }
 
-        function eliminarUsuario(uid) {
+        async function eliminarUsuario(uid) {
             baseUsuarios = baseUsuarios.filter(u => u.uid !== uid);
+            if (supabase) {
+                await supabase.from('usuarios').delete().eq('uid', uid);
+            }
             guardarEcosistemaEnDisco();
             renderizarListaUsuarios();
         }
@@ -438,8 +482,11 @@
             calcularYRenderizarPostes();
         }
 
-        function eliminarTrayecto(id) {
+        async function eliminarTrayecto(id) {
             tramosPostes = tramosPostes.filter(t => t.id !== id);
+            if (supabase) {
+                await supabase.from('tramos_postes').delete().eq('id', id);
+            }
             guardarEcosistemaEnDisco();
             calcularYRenderizarPostes();
         }
@@ -569,7 +616,7 @@
                                 <span class="text-[9px] text-slate-500 uppercase font-bold">Logro</span>
                                 <span class="font-mono text-xs sm:text-sm font-black ${esLogroFinal ? 'text-emerald-400' : 'text-blue-400'}">${pctObra}%</span>
                              </div>
-                             <button onclick="eliminarProyecto(${oIdx})" class="text-slate-600 hover:text-red-400 p-2 transition-all no-print"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                             <button onclick="eliminarProyecto('${obra.id}', ${oIdx})" class="text-slate-600 hover:text-red-400 p-2 transition-all no-print"><i class="fa-solid fa-trash-can text-xs"></i></button>
                           </div>
                         </div>
 
@@ -610,8 +657,11 @@
             renderizarObras();
         }
 
-        function eliminarProyecto(oIdx) {
+        async function eliminarProyecto(id, oIdx) {
             proyectosObras.splice(oIdx, 1);
+            if (supabase) {
+                await supabase.from('proyectos_obras').delete().eq('id', id);
+            }
             guardarEcosistemaEnDisco();
             renderizarObras();
         }
@@ -638,6 +688,11 @@
             guardarEcosistemaEnDisco();
             renderizarObras();
         }
+
+        // CONTROLADOR DE DISPARO INICIAL CON CONEXIÓN CLOUD ASÍNCRONA
+        window.onload = () => {
+            descargarDatosDesdeNube();
+        };
     </script>
 </body>
 </html>
