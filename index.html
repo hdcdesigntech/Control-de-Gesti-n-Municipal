@@ -302,7 +302,6 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
         
         const usarSupabaseCloud = (SUPABASE_URL && !SUPABASE_URL.includes("PEGA_AQUÍ"));
-        // Medida de protección extrema: Verifica que la librería cargó correctamente antes de inicializar
         const supabase = (usarSupabaseCloud && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         let usuarioLogueado = null;
@@ -345,7 +344,7 @@
                 localStorage.setItem('hdc_usuarios', JSON.stringify(baseUsuarios));
                 localStorage.setItem('hdc_tramos', JSON.stringify(tramosPostes));
                 localStorage.setItem('hdc_obras', JSON.stringify(proyectosObras));
-            } catch(e) { console.log("Memory lock local."); }
+            } catch(e) { console.log("Memory lock."); }
 
             if (supabase) {
                 try {
@@ -358,24 +357,33 @@
             }
         }
 
+        // AISLAMIENTO DE ERRORES DE SUPABASE: Evita que tablas inexistentes detengan la aplicación
         async function descargarDatosDesdeNube() {
             if (supabase) {
                 try {
                     let { data: users } = await supabase.from('usuarios').select('*');
                     if (users && users.length > 0) baseUsuarios = users;
+                } catch (e) { console.log("Tabla usuarios remota no sincronizada aún."); }
 
+                try {
                     let { data: tramos } = await supabase.from('tramos_postes').select('*');
                     if (tramos && tramos.length > 0) tramosPostes = tramos;
+                } catch (e) { console.log("Tabla tramos remota no sincronizada aún."); }
 
+                try {
                     let { data: obras } = await supabase.from('proyectos_obras').select('*');
                     if (obras && obras.length > 0) proyectosObras = obras;
-                } catch (error) {
-                    console.log("Error descargando de la nube. Usando disco local.");
-                }
+                } catch (error) { console.log("Tabla proyectos remota no sincronizada aún."); }
             }
-            calcularYRenderizarPostes();
-            renderizarObras();
-            renderizarListaUsuarios();
+            
+            // Garantizamos que la interfaz local renderice SIEMPRE
+            try {
+                calcularYRenderizarPostes();
+                renderizarObras();
+                renderizarListaUsuarios();
+            } catch(err) {
+                console.log("Error de dibujo:", err);
+            }
         }
 
         // CONTROLADOR DE ACCESO CON BYPASS FÍSICO CORREGIDO
@@ -384,7 +392,7 @@
             const uInput = document.getElementById('login-usuario').value.trim();
             const pInput = document.getElementById('login-pass').value.trim();
             
-            // BYPASS BLINDADO: Entrada obligatoria sin importar estado de red o base de datos
+            // BYPASS BLINDADO
             if (uInput === "master" && pInput === "1234") {
                 usuarioLogueado = { uid: "master", pass: "1234", nombre: "Dirección Ejecutiva", rol: "Master" };
                 if(!baseUsuarios.some(u => u.uid === "master")) {
@@ -516,7 +524,7 @@
             calcularYRenderizarPostes();
         }
 
-        // CONTROLADOR DE TABLA CORREGIDO SIN REFERENCE ERRORS
+        // VARIABLE CORREGIDA PERFECTAMENTE SIN REFERENCE ERRORS
         function calcularYRenderizarPostes() {
             const tbody = document.getElementById('tabla-postes-body');
             if(!tbody) return;
@@ -554,7 +562,7 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/[0.02] border-b border-white/5 transition-all text-[11px] sm:text-xs">
-                        <td class="p-2 sm:p-3 text-left font-black text-blue-400 uppercase">${tramo.category || tramo.categoria}</td>
+                        <td class="p-2 sm:p-3 text-left font-black text-blue-400 uppercase">${tramo.categoria}</td>
                         <td class="p-2 sm:p-3 text-left font-bold text-slate-200">${tramo.segmento}</td>
                         <td class="p-2 sm:p-3 text-slate-400 uppercase font-bold tracking-tight">${tramo.tipoPoste}</td>
                         <td class="p-2 sm:p-3 font-mono font-bold">${tramo.total}</td>
@@ -566,7 +574,7 @@
                         </td>
                         <td class="p-2 sm:p-3 font-mono font-bold text-amber-500">${pendientes}</td>
                         <td class="p-2 sm:p-3 text-slate-300 font-mono">${basePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblBase}</span></td>
-                        <td class="p-2 sm:p-3 text-slate-300 font-mono">${contrantePintura || contrastePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblContraste}</span></td>
+                        <td class="p-2 sm:p-3 text-slate-300 font-mono">${contrastePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblContraste}</span></td>
                         <td class="p-2 sm:p-3 text-slate-300 font-mono font-bold">${tramo.pintados > 0 ? brochas : 0} Und</td>
                         <td class="p-2 sm:p-3 text-right font-mono font-black ${pct === 100 ? 'text-emerald-400' : 'text-blue-400'}">${pct}%</td>
                         <td class="p-2 sm:p-3 text-center no-print">
