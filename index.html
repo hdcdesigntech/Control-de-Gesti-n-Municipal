@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -28,7 +28,7 @@
 </head>
 <body class="min-h-screen pb-12">
 
-    <div id="pantalla-login" class="fixed inset-0 z-[100] bg-[#060913] flex items-center justify-center p-4">
+    <div id="pantalla-login" class="fixed inset-0 z-[100] bg-[#060913] flex flex-col items-center justify-center p-4">
         <div class="glass w-full max-w-sm p-6 rounded-2xl border border-white/10 space-y-6 text-center">
             <div class="space-y-2">
                 <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg mx-auto">
@@ -52,6 +52,12 @@
                 </button>
             </form>
         </div>
+        
+        <footer class="mt-6 text-center text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] no-print">
+            <span class="bg-gradient-to-r from-[#D4AF37] via-[#FFF3B0] to-[#C0C0C0] bg-clip-text text-transparent">
+                Copyright©2026 HDC Design & Tech
+            </span>
+        </footer>
     </div>
 
     <div id="drawer-usuarios" class="fixed inset-y-0 right-0 w-full max-w-xs bg-[#090d1a] border-l border-white/10 z-50 p-6 shadow-2xl space-y-6 hidden no-print">
@@ -276,7 +282,7 @@
 
     </main>
 
-    <footer class="p-6 text-center text-[7px] font-black uppercase tracking-[0.5em] glass border-t border-white/5 no-print mt-8">
+    <footer class="p-6 text-center text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] glass border-t border-white/5 no-print mt-8">
         <span class="bg-gradient-to-r from-[#D4AF37] via-[#FFF3B0] to-[#C0C0C0] bg-clip-text text-transparent">
             Copyright©2026 HDC Design & Tech
         </span>
@@ -385,6 +391,7 @@
 
         function renderizarListaUsuarios() {
             const lista = document.getElementById('lista-usuarios-cuadrilla');
+            if(!lista) return;
             lista.innerHTML = baseUsuarios.filter(u => u.rol !== 'Master').map(u => `
                 <div class="flex justify-between items-center bg-white/5 p-2 rounded-xl text-[11px]">
                     <div>
@@ -486,7 +493,7 @@
                         </td>
                         <td class="p-2 sm:p-3 font-mono font-bold text-amber-500">${pendientes}</td>
                         <td class="p-2 sm:p-3 text-slate-300 font-mono">${basePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblBase}</span></td>
-                        <td class="p-2 sm:p-3 text-slate-300 font-mono">${contrastPintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblContraste}</span></td>
+                        <td class="p-2 sm:p-3 text-slate-300 font-mono">${contrastePintura} Gal <span class="text-[9px] text-slate-500 block uppercase font-bold">${lblContraste}</span></td>
                         <td class="p-2 sm:p-3 text-slate-300 font-mono font-bold">${tramo.pintados > 0 ? brochas : 0} Und</td>
                         <td class="p-2 sm:p-3 text-right font-mono font-black ${pct === 100 ? 'text-emerald-400' : 'text-blue-400'}">${pct}%</td>
                         <td class="p-2 sm:p-3 text-center no-print">
