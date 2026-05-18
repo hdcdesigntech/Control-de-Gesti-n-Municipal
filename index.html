@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirección Ejecutiva - Control Operativo Guacara</title>
+    <title>Dirección Ejecutiva/Control Operativo Guacara</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -324,7 +324,7 @@
 
     <div class="hidden print-only fixed bottom-10 left-0 w-full grid grid-cols-3 text-center text-[10px] uppercase font-black px-12">
         <div class="border-t border-black pt-2 mx-6">Coordinador de Campo</div>
-        <div class="border-t border-black pt-2 mx-6">Dirección Executive</div>
+        <div class="border-t border-black pt-2 mx-6">Dirección Ejecutiva</div>
         <div class="border-t border-black pt-2 mx-6">Alcaldía de Guacara</div>
     </div>
 
@@ -333,6 +333,7 @@
     </div>
 
     <script>
+        // Parámetros Maestros de Supabase Cloud
         const SUPABASE_URL = "https://cckzplmeoowvxwmiztig.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3pwbG1lb293dnh3bWl6dGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjQyMjIsImV4cCI6MjA5NDU0MDIyMn0.fxyIQC7XN3vs12pudk9P_n8DiFefuN4m9ySVY9ay1Lo";
         
@@ -383,7 +384,6 @@
             if (supabaseClient) {
                 try {
                     await supabaseClient.from('usuarios').upsert(baseUsuarios);
-                    // CORRECCIÓN SURGICAL: Se cambia 'baseUsuarios' por 'tramosPostes' para apuntar a la tabla correcta
                     await supabaseClient.from('tramos_postes').upsert(tramosPostes);
                     await supabaseClient.from('proyectos_obras').upsert(proyectosObras);
                 } catch (error) {
@@ -419,7 +419,6 @@
             ejecutarDibujadoProtegido();
         }
 
-        // CONTROL VISUAL ACTIVADO SIN MÁSCARAS DE SILENCIO PARA LOGS EN CONSOLA
         function ejecutarDibujadoProtegido() {
             try { calcularYRenderizarPostes(); } catch(err) { console.error("Fallo renderizando postes:", err); }
             try { renderizarObras(); } catch(err) { console.error("Fallo renderizando obras:", err); }
@@ -572,7 +571,7 @@
             let galNaranja = 0, galAzul = 0, galAluminio = 0, galNegro = 0;
 
             tramosPostes.forEach((tramo, index) => {
-                // NORMALIZACIÓN DE ATRIBUTOS (Blindaje absoluto contra cambios de mayúsculas/minúsculas de la nube)
+                // NORMALIZACIÓN ABSOLUTA: Soporta camelCase de JS y minúsculas nativas de PostgreSQL
                 let total = parseInt(tramo.total) || 0;
                 let pintados = parseInt(tramo.pintados) || 0;
                 let selectTipoPoste = tramo.tipoPoste || tramo.tipoposte || "Poste Alumbrado";
@@ -583,7 +582,7 @@
                 let pct = total > 0 ? Math.round((pintados / total) * 100) : 0;
                 
                 let basePintura = Math.ceil(pintados / 4);
-                let contrastePintura = Math.ceil(pintados / 8);
+                let contrastePintura = Math.ceil(pintados / 8); // DECLARACIÓN CORRECTA
                 let brochas = Math.ceil((pintados / 15) * 2);
                 if (brochas < 1 && pintados > 0) brochas = 1;
 
